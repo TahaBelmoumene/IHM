@@ -1,0 +1,39 @@
+﻿<Window x:Class="IHM.GestionRayonsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Architecte du Stock" Height="500" Width="900" WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <GroupBox Header="1. Rayons Principaux" Grid.Column="0" Margin="5" Padding="5">
+            <StackPanel>
+                <TextBox x:Name="TxtNiveau1" Height="25" Margin="0,0,0,5" ToolTip="Nom du rayon"/>
+                <Button Content="Créer Rayon" Click="BtnAjoutNiv1_Click" Background="#28a745" Foreground="White" Margin="0,0,0,10"/>
+                <ListBox x:Name="LstNiveau1" Height="350" SelectionChanged="LstNiveau1_SelectionChanged" DisplayMemberPath="Nom"/>
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox Header="2. Familles" Grid.Column="1" Margin="5" Padding="5" IsEnabled="False" x:Name="GrpNiveau2">
+            <StackPanel>
+                <TextBlock Text="Ajouter dans la sélection :" FontStyle="Italic" Margin="0,0,0,5"/>
+                <TextBox x:Name="TxtNiveau2" Height="25" Margin="0,0,0,5"/>
+                <Button Content="Créer Famille" Click="BtnAjoutNiv2_Click" Background="#007ACC" Foreground="White" Margin="0,0,0,10"/>
+                <ListBox x:Name="LstNiveau2" Height="330" SelectionChanged="LstNiveau2_SelectionChanged" DisplayMemberPath="Nom"/>
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox Header="3. Types / Sous-Familles" Grid.Column="2" Margin="5" Padding="5" IsEnabled="False" x:Name="GrpNiveau3">
+            <StackPanel>
+                <TextBlock Text="Ajouter précision :" FontStyle="Italic" Margin="0,0,0,5"/>
+                <TextBox x:Name="TxtNiveau3" Height="25" Margin="0,0,0,5"/>
+                <Button Content="Créer Type" Click="BtnAjoutNiv3_Click" Background="#6610f2" Foreground="White" Margin="0,0,0,10"/>
+                <ListBox x:Name="LstNiveau3" Height="330" DisplayMemberPath="Nom"/>
+            </StackPanel>
+        </GroupBox>
+    </Grid>
+</Window>

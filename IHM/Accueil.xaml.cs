@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using IHM; // Ajoutez cette directive using si AjouterPieceWindow est dans le namespace IHM.Windows
 
 namespace IHM
 {
@@ -20,8 +21,8 @@ namespace IHM
         // 2. Placeholder pour Ajouter Pièce
         private void BtnAjouterPiece_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Écran d'ajout de pièce à créer !");
-            // Plus tard, tu feras : new AjouterPieceWindow().Show();
+            AjouterPieceWindow fenetre = new AjoutPieceWindow();
+            fenetre.ShowDialog();
         }
 
         // 3. Placeholder pour Modifier Pièce
@@ -33,7 +34,9 @@ namespace IHM
         // 4. Placeholder pour Ajouter Voiture
         private void BtnAjouterVoiture_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Écran d'ajout de voiture à créer !");
+            // C'est ici qu'on ouvre la fenêtre de création en cascade
+            AjoutVoitureWindow fenetreAjout = new AjoutVoitureWindow();
+            fenetreAjout.ShowDialog();
         }
     }
 }

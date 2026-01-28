@@ -10,19 +10,20 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <GroupBox Header="1. Marque" Grid.Column="0" VerticalAlignment="Top" Height="130" Margin="5" Padding="10" Background="White">
-            <StackPanel>
+        <GroupBox Header="1. Marque" Grid.Column="0" VerticalAlignment="Top" Height="163" Margin="5,5,5,0" Padding="10" Background="White">
+            <StackPanel Height="123">
                 <TextBlock Text="Créer une nouvelle marque :"/>
                 <StackPanel Orientation="Horizontal" Margin="0,5">
                     <TextBox x:Name="TxtMarque" Width="200" Height="25"/>
                     <Button Content="Ajouter" Width="80" Margin="10,0,0,0" Click="BtnAjoutMarque_Click" Background="#28a745" Foreground="White"/>
                 </StackPanel>
                 <TextBlock Text="Ou sélectionner existante :" Margin="0,10,0,0" FontStyle="Italic"/>
-                <ComboBox x:Name="CboMarques" SelectionChanged="CboMarques_SelectionChanged" DisplayMemberPath="Nom"/>
+                <ComboBox x:Name="CboMarques" SelectionChanged="CboMarques_SelectionChanged" DisplayMemberPath="Nom" 
+          Height="23" FontSize="16" VerticalContentAlignment="Center" Margin="0,5"/>
             </StackPanel>
         </GroupBox>
 
-        <GroupBox Header="2. Modèle" Grid.Column="0" VerticalAlignment="Bottom" Height="130" Margin="5,0,5,150" Padding="10" Background="White" IsEnabled="False" x:Name="GrpModele">
+        <GroupBox Header="2. Modèle" Grid.Column="0" VerticalAlignment="Top" Height="160" Margin="5,274,5,0" Padding="10" Background="White" IsEnabled="False" x:Name="GrpModele">
             <StackPanel>
                 <TextBlock Text="Ajouter un modèle (ex: Clio) à la marque :"/>
                 <StackPanel Orientation="Horizontal" Margin="0,5">
@@ -34,7 +35,7 @@
             </StackPanel>
         </GroupBox>
 
-        <GroupBox Header="3. Génération" Grid.Column="1" VerticalAlignment="Top" Height="160" Margin="5" Padding="10" Background="White" IsEnabled="False" x:Name="GrpGeneration">
+        <GroupBox Header="3. Génération" Grid.Column="1" VerticalAlignment="Top" Height="Auto" MinHeight="200" Margin="5" Padding="10" Background="White" IsEnabled="False" x:Name="GrpGeneration">
             <StackPanel>
                 <TextBlock Text="Version (ex: Clio IV) :"/>
                 <TextBox x:Name="TxtGenNom" Margin="0,2"/>
@@ -44,7 +45,7 @@
                 <Button Content="Ajouter Version" Height="30" Margin="0,5" Click="BtnAjoutGen_Click" Background="#007ACC" Foreground="White"/>
 
                 <TextBlock Text="Sélectionner une version :" Margin="0,5,0,0"/>
-                <ComboBox x:Name="CboGenerations" SelectionChanged="CboGenerations_SelectionChanged" DisplayMemberPath="Nom"/>
+                <ComboBox x:Name="CboGenerations" SelectionChanged="CboGenerations_SelectionChanged" DisplayMemberPath="Nom" Height="25"/>
             </StackPanel>
         </GroupBox>
 

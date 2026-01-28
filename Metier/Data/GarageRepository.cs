@@ -50,6 +50,31 @@ namespace Metier.Data
         {
             return _context.Motorisations.Where(m => m.GenerationId == generationId).OrderBy(m => m.Nom).ToList();
         }
+        // 1. Récupérer uniquement les Rayons principaux (ceux qui n'ont pas de parent)
+        public List<Categorie> GetRayonsPrincipaux()
+        {
+            return _context.Categories
+                           .Where(c => c.ParentId == null)
+                           .OrderBy(c => c.Nom)
+                           .ToList();
+        }
+
+        // 2. Récupérer les sous-catégories d'un parent
+        public List<Categorie> GetSousCategories(int parentId)
+        {
+            return _context.Categories
+                           .Where(c => c.ParentId == parentId)
+                           .OrderBy(c => c.Nom)
+                           .ToList();
+        }
+
+        // 3. Ajouter une catégorie (Racine ou Enfant)
+        public void AjouterCategorie(string nom, int? parentId = null)
+        {
+            var cat = new Categorie { Nom = nom, ParentId = parentId };
+            _context.Categories.Add(cat);
+            _context.SaveChanges();
+        }
         public List<Piece> GetPiecesParCategorie(int categorieId)
         {
             return _context.Pieces
@@ -86,7 +111,18 @@ namespace Metier.Data
             _context.SaveChanges();
         }
 
-        // Nettoyage : Supprime la méthode "InitialiserDonneesDeTest" qui créait les Renault automatiquement.
-        // Garde juste "InitialiserCategories" si tu veux conserver les rayons (Freinage, Moteur...).
+        public void AjouterPiece(string nom, decimal prix, int stock, int categorieId)
+        {
+            var nouvellePiece = new Piece
+            {
+                Nom = nom,
+                Prix = prix,
+                Stock = stock,
+                CategorieId = categorieId
+            };
+
+            _context.Pieces.Add(nouvellePiece);
+            _context.SaveChanges();
+        }
     }
 }

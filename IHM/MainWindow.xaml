@@ -28,7 +28,9 @@
                       SelectedItem="{Binding MoteurSelected}"
                       DisplayMemberPath="Nom" Margin="0,5,0,30"/>
 
-            <Button Content="Valider le véhicule" Height="40" Background="#007ACC" Foreground="White"/>
+            <Button Content="VOIR LES PIÈCES DISPONIBLES" 
+        Height="40" Background="#007ACC" Foreground="White"
+        Click="BtnVoirPieces_Click"/>
         </StackPanel>
     </Grid>
 </Window>
