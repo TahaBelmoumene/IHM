@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using IHM; // Ajoutez cette directive using si AjouterPieceWindow est dans le namespace IHM.Windows
 
 namespace IHM
 {
@@ -21,7 +20,7 @@ namespace IHM
         // 2. Placeholder pour Ajouter Pièce
         private void BtnAjouterPiece_Click(object sender, RoutedEventArgs e)
         {
-            AjouterPieceWindow fenetre = new AjoutPieceWindow();
+            AjoutPieceWindow fenetre = new AjoutPieceWindow();
             fenetre.ShowDialog();
         }
 
@@ -34,9 +33,10 @@ namespace IHM
         // 4. Placeholder pour Ajouter Voiture
         private void BtnAjouterVoiture_Click(object sender, RoutedEventArgs e)
         {
-            // C'est ici qu'on ouvre la fenêtre de création en cascade
-            AjoutVoitureWindow fenetreAjout = new AjoutVoitureWindow();
-            fenetreAjout.ShowDialog();
+            // On utilise le nouveau bouton "Ajouter Voiture" pour tester les rayons temporairement
+            // ou tu peux créer un bouton spécifique "Gérer Stock"
+            GestionRayonsWindow fenetre = new GestionRayonsWindow();
+            fenetre.ShowDialog();
         }
     }
 }
