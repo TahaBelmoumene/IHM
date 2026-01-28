@@ -1,0 +1,34 @@
+﻿<Window x:Class="IHM.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Garage Manager" Height="500" Width="800"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="20">
+        <StackPanel>
+            <TextBlock Text="Identifier le véhicule" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
+
+            <TextBlock Text="Marque :"/>
+            <ComboBox ItemsSource="{Binding ListeMarques}" 
+                      SelectedItem="{Binding MarqueSelected}"
+                      DisplayMemberPath="Nom" Margin="0,5,0,15"/>
+
+            <TextBlock Text="Modèle :"/>
+            <ComboBox ItemsSource="{Binding ListeModeles}" 
+                      SelectedItem="{Binding ModeleSelected}"
+                      DisplayMemberPath="Nom" Margin="0,5,0,15"/>
+
+            <TextBlock Text="Année / Version :"/>
+            <ComboBox ItemsSource="{Binding ListeGenerations}" 
+                      SelectedItem="{Binding GenerationSelected}"
+                      DisplayMemberPath="Nom" Margin="0,5,0,15"/>
+
+            <TextBlock Text="Motorisation :"/>
+            <ComboBox ItemsSource="{Binding ListeMoteurs}" 
+                      SelectedItem="{Binding MoteurSelected}"
+                      DisplayMemberPath="Nom" Margin="0,5,0,30"/>
+
+            <Button Content="Valider le véhicule" Height="40" Background="#007ACC" Foreground="White"/>
+        </StackPanel>
+    </Grid>
+</Window>
