@@ -11,10 +11,11 @@ namespace Metier.Entities
     {
         [Key]
         public int Id { get; set; }
-        public string Nom { get; set; }
-        public string Carburant { get; set; }
+        public string? Nom { get; set; }       // <--- Ajoute le ?
+        public string? Carburant { get; set; } // <--- Ajoute le ?
         public int GenerationId { get; set; }
+
         [ForeignKey("GenerationId")]
-        public Generation Generation { get; set; }
+        public Generation? Generation { get; set; } // <--- Ajoute le ?
     }
 }

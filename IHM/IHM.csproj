@@ -9,6 +9,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Metier\Metier.csproj" />
+	  <ProjectReference Include="..\Metier\Metier.csproj" />
 	</ItemGroup>
 </Project>

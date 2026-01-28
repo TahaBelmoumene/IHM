@@ -1,0 +1,21 @@
+﻿<Window x:Class="IHM.ListePiecesWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Pièces disponibles" Height="450" Width="800"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="20">
+        <StackPanel>
+            <TextBlock x:Name="TxtTitre" Text="Pièces : [Catégorie]" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
+
+            <DataGrid x:Name="GridPieces" AutoGenerateColumns="False" IsReadOnly="True" Height="300">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Nom de la pièce" Binding="{Binding Nom}" Width="*"/>
+                    <DataGridTextColumn Header="Prix (€)" Binding="{Binding Prix}" Width="100"/>
+                    <DataGridTextColumn Header="Stock" Binding="{Binding Stock}" Width="80"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <Button Content="Retour" Click="BtnRetour_Click" Margin="0,20,0,0" Height="30" Width="100" HorizontalAlignment="Left"/>
+        </StackPanel>
+    </Grid>
+</Window>

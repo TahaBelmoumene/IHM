@@ -1,0 +1,67 @@
+﻿<Window x:Class="IHM.AjoutVoitureWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Créateur de Véhicule" Height="600" Width="900" 
+        WindowStartupLocation="CenterScreen" Background="#F5F5F5">
+
+    <Grid Margin="15">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <GroupBox Header="1. Marque" Grid.Column="0" VerticalAlignment="Top" Height="130" Margin="5" Padding="10" Background="White">
+            <StackPanel>
+                <TextBlock Text="Créer une nouvelle marque :"/>
+                <StackPanel Orientation="Horizontal" Margin="0,5">
+                    <TextBox x:Name="TxtMarque" Width="200" Height="25"/>
+                    <Button Content="Ajouter" Width="80" Margin="10,0,0,0" Click="BtnAjoutMarque_Click" Background="#28a745" Foreground="White"/>
+                </StackPanel>
+                <TextBlock Text="Ou sélectionner existante :" Margin="0,10,0,0" FontStyle="Italic"/>
+                <ComboBox x:Name="CboMarques" SelectionChanged="CboMarques_SelectionChanged" DisplayMemberPath="Nom"/>
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox Header="2. Modèle" Grid.Column="0" VerticalAlignment="Bottom" Height="130" Margin="5,0,5,150" Padding="10" Background="White" IsEnabled="False" x:Name="GrpModele">
+            <StackPanel>
+                <TextBlock Text="Ajouter un modèle (ex: Clio) à la marque :"/>
+                <StackPanel Orientation="Horizontal" Margin="0,5">
+                    <TextBox x:Name="TxtModele" Width="200" Height="25"/>
+                    <Button Content="Ajouter" Width="80" Margin="10,0,0,0" Click="BtnAjoutModele_Click" Background="#007ACC" Foreground="White"/>
+                </StackPanel>
+                <TextBlock Text="Sélectionner un modèle :" Margin="0,10,0,0"/>
+                <ComboBox x:Name="CboModeles" SelectionChanged="CboModeles_SelectionChanged" DisplayMemberPath="Nom"/>
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox Header="3. Génération" Grid.Column="1" VerticalAlignment="Top" Height="160" Margin="5" Padding="10" Background="White" IsEnabled="False" x:Name="GrpGeneration">
+            <StackPanel>
+                <TextBlock Text="Version (ex: Clio IV) :"/>
+                <TextBox x:Name="TxtGenNom" Margin="0,2"/>
+                <TextBlock Text="Année de début :"/>
+                <TextBox x:Name="TxtGenAnnee" Width="60" HorizontalAlignment="Left" Margin="0,2"/>
+
+                <Button Content="Ajouter Version" Height="30" Margin="0,5" Click="BtnAjoutGen_Click" Background="#007ACC" Foreground="White"/>
+
+                <TextBlock Text="Sélectionner une version :" Margin="0,5,0,0"/>
+                <ComboBox x:Name="CboGenerations" SelectionChanged="CboGenerations_SelectionChanged" DisplayMemberPath="Nom"/>
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox Header="4. Motorisation" Grid.Column="1" VerticalAlignment="Bottom" Height="160" Margin="5,0,5,120" Padding="10" Background="White" IsEnabled="False" x:Name="GrpMoteur">
+            <StackPanel>
+                <TextBlock Text="Moteur (ex: 1.5 dCi 90) :"/>
+                <TextBox x:Name="TxtMoteurNom" Margin="0,2"/>
+                <TextBlock Text="Carburant :"/>
+                <ComboBox x:Name="CboCarburant" SelectedIndex="0" Margin="0,2">
+                    <ComboBoxItem Content="Diesel"/>
+                    <ComboBoxItem Content="Essence"/>
+                    <ComboBoxItem Content="Hybride"/>
+                    <ComboBoxItem Content="Électrique"/>
+                </ComboBox>
+
+                <Button Content="Terminer &amp; Ajouter Moteur" Height="30" Margin="0,10" Click="BtnAjoutMoteur_Click" Background="#D9534F" Foreground="White" FontWeight="Bold"/>
+            </StackPanel>
+        </GroupBox>
+    </Grid>
+</Window>

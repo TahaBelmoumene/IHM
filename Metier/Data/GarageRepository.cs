@@ -50,5 +50,43 @@ namespace Metier.Data
         {
             return _context.Motorisations.Where(m => m.GenerationId == generationId).OrderBy(m => m.Nom).ToList();
         }
+        public List<Piece> GetPiecesParCategorie(int categorieId)
+        {
+            return _context.Pieces
+                           .Where(p => p.CategorieId == categorieId)
+                           .OrderBy(p => p.Nom)
+                           .ToList();
+        }
+        // Méthode pour remplir la BDD avec des fausses données de test
+        // 1. Ajouter Marque
+        public void AjouterMarque(string nom)
+        {
+            _context.Marques.Add(new Marque { Nom = nom });
+            _context.SaveChanges();
+        }
+
+        // 2. Ajouter Modèle
+        public void AjouterModele(string nom, int marqueId)
+        {
+            _context.Modeles.Add(new Modele { Nom = nom, MarqueId = marqueId });
+            _context.SaveChanges();
+        }
+
+        // 3. Ajouter Génération (ex: Clio 4, année 2012)
+        public void AjouterGeneration(string nom, int annee, int modeleId)
+        {
+            _context.Generations.Add(new Generation { Nom = nom, AnneeDebut = annee, ModeleId = modeleId });
+            _context.SaveChanges();
+        }
+
+        // 4. Ajouter Motorisation
+        public void AjouterMoteur(string nom, string carburant, int generationId)
+        {
+            _context.Motorisations.Add(new Motorisation { Nom = nom, Carburant = carburant, GenerationId = generationId });
+            _context.SaveChanges();
+        }
+
+        // Nettoyage : Supprime la méthode "InitialiserDonneesDeTest" qui créait les Renault automatiquement.
+        // Garde juste "InitialiserCategories" si tu veux conserver les rayons (Freinage, Moteur...).
     }
 }
