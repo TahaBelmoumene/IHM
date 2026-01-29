@@ -68,7 +68,7 @@ namespace IHM
 
         private void LstNiveau2_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (LstNiveau2.SelectedItem is Categorie cat)
+            if (LstNiveau2.SelectedItem is Categorie cat)  
             {
                 _parentNiv2 = cat;
 
