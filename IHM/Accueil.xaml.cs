@@ -33,8 +33,12 @@ namespace IHM
         // 4. Placeholder pour Ajouter Voiture
         private void BtnAjouterVoiture_Click(object sender, RoutedEventArgs e)
         {
-            // On utilise le nouveau bouton "Ajouter Voiture" pour tester les rayons temporairement
-            // ou tu peux créer un bouton spécifique "Gérer Stock"
+            AjoutVoitureWindow fenetreAjout = new AjoutVoitureWindow();
+            fenetreAjout.ShowDialog();
+        }
+        // Ajoute cette méthode pour ouvrir l'architecte
+        private void BtnGererRayons_Click(object sender, RoutedEventArgs e)
+        {
             GestionRayonsWindow fenetre = new GestionRayonsWindow();
             fenetre.ShowDialog();
         }

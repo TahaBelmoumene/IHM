@@ -29,6 +29,11 @@
                     Height="60" Width="400" Margin="10" FontSize="18"
                     Background="White" BorderBrush="#007ACC" BorderThickness="2"
                     Click="BtnAjouterVoiture_Click"/>
+            
+            <Button Content="🗂️  GÉRER LES RAYONS" 
+                    Height="60" Width="400" Margin="10" FontSize="18"
+                    Background="White" BorderBrush="#007ACC" BorderThickness="2"
+                    Click="BtnGererRayons_Click"/>
         </StackPanel>
     </Grid>
 </Window>
