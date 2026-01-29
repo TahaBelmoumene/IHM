@@ -131,8 +131,9 @@ namespace Metier.Data
             _context.SaveChanges();
         }
 
-        public void AjouterPiece(string nom, decimal prix, int stock, int categorieId)
+        public void AjouterPiece(string nom, decimal prix, int stock, int categorieId, int motorisationId) // Ajout du paramètre
         {
+            // 1. Créer la pièce
             var nouvellePiece = new Piece
             {
                 Nom = nom,
@@ -142,9 +143,11 @@ namespace Metier.Data
             };
 
             _context.Pieces.Add(nouvellePiece);
-            _context.SaveChanges();
-        }
+            _context.SaveChanges(); // Important : Cela génère l'ID de la nouvelle pièce
 
+            // 2. Créer le lien de compatibilité immédiatement
+            AjouterCompatibilite(nouvellePiece.Id, motorisationId);
+        }
 
         public void InitialiserArchitectureStock()
         {

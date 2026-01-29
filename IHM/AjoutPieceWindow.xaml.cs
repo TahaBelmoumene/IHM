@@ -8,17 +8,73 @@ namespace IHM
     public partial class AjoutPieceWindow : Window
     {
         private GarageRepository _repo;
-        private Categorie _categorieFinale; // C'est celle qu'on va sauvegarder
+
+        // On ajoute le ? pour dire que ça peut être null au début
+        private Categorie? _categorieFinale;
+        private Motorisation? _moteurSelectionne;
 
         public AjoutPieceWindow()
         {
-            InitializeComponent();
+            InitializeComponent(); // C'est cette ligne qui relie le XAML au C#
             _repo = new GarageRepository();
-            ChargerNiveau1();
+
+            ChargerNiveau1(); // Charge les rayons
+            ChargerMarques(); // Charge les marques
         }
 
-        // --- GESTION DES CASCADES (Pareil que pour les voitures) ---
+        // ==========================================================
+        // 1. GESTION DU VÉHICULE
+        // ==========================================================
+        private void ChargerMarques()
+        {
+            CboMarque.ItemsSource = _repo.GetMarques();
+        }
 
+        private void CboMarque_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (CboMarque.SelectedItem is Marque m)
+            {
+                CboModele.ItemsSource = _repo.GetModeles(m.Id);
+                CboModele.IsEnabled = true;
+                CboGeneration.ItemsSource = null; CboGeneration.IsEnabled = false;
+                CboMoteur.ItemsSource = null; CboMoteur.IsEnabled = false;
+                ValiderBouton();
+            }
+        }
+
+        private void CboModele_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (CboModele.SelectedItem is Modele m)
+            {
+                CboGeneration.ItemsSource = _repo.GetGenerations(m.Id);
+                CboGeneration.IsEnabled = true;
+                CboMoteur.ItemsSource = null; CboMoteur.IsEnabled = false;
+                ValiderBouton();
+            }
+        }
+
+        private void CboGeneration_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (CboGeneration.SelectedItem is Generation g)
+            {
+                CboMoteur.ItemsSource = _repo.GetMoteurs(g.Id);
+                CboMoteur.IsEnabled = true;
+                ValiderBouton();
+            }
+        }
+
+        private void CboMoteur_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (CboMoteur.SelectedItem is Motorisation m)
+            {
+                _moteurSelectionne = m;
+                ValiderBouton();
+            }
+        }
+
+        // ==========================================================
+        // 2. GESTION DES RAYONS (EXISTANT)
+        // ==========================================================
         private void ChargerNiveau1()
         {
             CboNiv1.ItemsSource = _repo.GetRayonsPrincipaux();
@@ -28,16 +84,12 @@ namespace IHM
         {
             if (CboNiv1.SelectedItem is Categorie cat)
             {
-                _categorieFinale = cat; // Pour l'instant, c'est elle la catégorie choisie
+                _categorieFinale = cat;
                 ValiderBouton();
 
-                // On charge le niveau suivant
                 CboNiv2.ItemsSource = _repo.GetSousCategories(cat.Id);
                 CboNiv2.IsEnabled = true;
-
-                // On reset le niveau 3
-                CboNiv3.ItemsSource = null;
-                CboNiv3.IsEnabled = false;
+                CboNiv3.ItemsSource = null; CboNiv3.IsEnabled = false;
             }
         }
 
@@ -45,7 +97,7 @@ namespace IHM
         {
             if (CboNiv2.SelectedItem is Categorie cat)
             {
-                _categorieFinale = cat; // On précise : c'est maintenant la sous-catégorie
+                _categorieFinale = cat;
                 ValiderBouton();
 
                 CboNiv3.ItemsSource = _repo.GetSousCategories(cat.Id);
@@ -57,29 +109,39 @@ namespace IHM
         {
             if (CboNiv3.SelectedItem is Categorie cat)
             {
-                _categorieFinale = cat; // On est au plus précis
+                _categorieFinale = cat;
             }
         }
 
-        // Active le bouton seulement si une catégorie est choisie
+        // ==========================================================
+        // 3. VALIDATION ET ENREGISTREMENT
+        // ==========================================================
         private void ValiderBouton()
         {
-            BtnValider.IsEnabled = true;
-            BtnValider.Opacity = 1;
+            bool categorieOk = _categorieFinale != null;
+            bool moteurOk = _moteurSelectionne != null;
+
+            BtnValider.IsEnabled = categorieOk && moteurOk;
+            BtnValider.Opacity = (categorieOk && moteurOk) ? 1 : 0.5;
         }
 
-        // --- ENREGISTREMENT ---
         private void BtnEnregistrer_Click(object sender, RoutedEventArgs e)
         {
-            // 1. Vérifs
+            // Vérifs de base
             if (string.IsNullOrWhiteSpace(TxtNom.Text)) { MessageBox.Show("Il manque le nom !"); return; }
             if (!decimal.TryParse(TxtPrix.Text.Replace(".", ","), out decimal prix)) { MessageBox.Show("Prix invalide"); return; }
             if (!int.TryParse(TxtStock.Text, out int stock)) { MessageBox.Show("Stock invalide"); return; }
 
-            // 2. Sauvegarde
-            _repo.AjouterPiece(TxtNom.Text, prix, stock, _categorieFinale.Id);
+            if (_categorieFinale == null || _moteurSelectionne == null)
+            {
+                MessageBox.Show("Veuillez sélectionner un rayon et un véhicule complet.");
+                return;
+            }
 
-            MessageBox.Show($"✅ Pièce ajoutée dans le rayon {_categorieFinale.Nom} !");
+            // Sauvegarde
+            _repo.AjouterPiece(TxtNom.Text, prix, stock, _categorieFinale.Id, _moteurSelectionne.Id);
+
+            MessageBox.Show($"✅ Pièce ajoutée pour {_moteurSelectionne.Nom} !");
             this.Close();
         }
     }
