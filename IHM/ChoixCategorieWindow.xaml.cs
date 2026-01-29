@@ -25,11 +25,15 @@ namespace IHM
         }
 
         // Quand on double-clique sur une catégorie
+        // Quand on double-clique sur une catégorie
         private void LstCategories_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (LstCategories.SelectedItem is Categorie categorieSelectionnee)
             {
-                MessageBox.Show($"Tu as cliqué sur {categorieSelectionnee.Nom} pour la voiture {_voitureChoisie.Nom}.\n\nProchaine étape : Afficher la liste des pièces !");
+                // Au lieu d'un simple message, on ouvre la vraie fenêtre !
+                // On passe la catégorie cliquée ET la voiture choisie au début
+                ListePiecesWindow fenetre = new ListePiecesWindow(categorieSelectionnee, _voitureChoisie);
+                fenetre.ShowDialog();
             }
         }
     }

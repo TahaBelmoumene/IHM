@@ -10,25 +10,20 @@ namespace Metier.Data
         private GarageContext _context;
 
         // Récupérer toutes les catégories (Moteur, Freinage, etc.)
+        // Récupérer toutes les catégories
         public List<Categorie> GetCategories()
         {
-            // Si la table est vide, on crée quelques fausses catégories pour tester !
-            if (!_context.Categories.Any())
-            {
-                _context.Categories.Add(new Categorie { Nom = "Moteur & Distribution" });
-                _context.Categories.Add(new Categorie { Nom = "Freinage" });
-                _context.Categories.Add(new Categorie { Nom = "Filtration & Huile" });
-                _context.Categories.Add(new Categorie { Nom = "Direction & Suspension" });
-                _context.Categories.Add(new Categorie { Nom = "Carrosserie" });
-                _context.SaveChanges();
-            }
-
+            // On retourne juste la liste triée. 
+            // L'initialisation se fait désormais UNIQUEMENT dans le constructeur.
             return _context.Categories.OrderBy(c => c.Nom).ToList();
         }
         public GarageRepository()
         {
             _context = new GarageContext();
-            _context.Database.EnsureCreated(); // Sécurité
+            _context.Database.EnsureCreated(); // Crée le fichier vide s'il n'existe pas
+
+            // C'est cette ligne qui remplit tout ton stock au premier lancement
+            InitialiserArchitectureStock();
         }
 
         public List<Marque> GetMarques()
@@ -74,6 +69,31 @@ namespace Metier.Data
             var cat = new Categorie { Nom = nom, ParentId = parentId };
             _context.Categories.Add(cat);
             _context.SaveChanges();
+        }
+
+        // 1. CRÉER UN LIEN : Dire qu'une pièce est compatible avec une voiture
+        public void AjouterCompatibilite(int pieceId, int motorisationId)
+        {
+            // On vérifie si le lien existe déjà pour éviter les doublons
+            bool existeDeja = _context.Compatibilites
+                                      .Any(c => c.PieceId == pieceId && c.MotorisationId == motorisationId);
+
+            if (!existeDeja)
+            {
+                var lien = new Compatibilite { PieceId = pieceId, MotorisationId = motorisationId };
+                _context.Compatibilites.Add(lien);
+                _context.SaveChanges();
+            }
+        }
+
+        // 2. CONSULTER : Récupérer les pièces d'une catégorie MAIS FILTRÉES pour une voiture
+        public List<Piece> GetPiecesCompatibles(int categorieId, int motorisationId)
+        {
+            return _context.Compatibilites
+                           .Where(c => c.MotorisationId == motorisationId && c.Piece.CategorieId == categorieId)
+                           .Select(c => c.Piece) // On ne garde que la pièce, pas l'objet compatibilité
+                           .OrderBy(p => p.Nom)
+                           .ToList();
         }
         public List<Piece> GetPiecesParCategorie(int categorieId)
         {

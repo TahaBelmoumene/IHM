@@ -11,6 +11,7 @@ public class GarageContext : DbContext
     // --- AJOUTE CES DEUX LIGNES ---
     public DbSet<Categorie> Categories { get; set; }
     public DbSet<Piece> Pieces { get; set; }
+    public DbSet<Compatibilite> Compatibilites { get; set; }
     // -----------------------------
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
