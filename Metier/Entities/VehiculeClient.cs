@@ -8,14 +8,16 @@ namespace Metier.Entities
     {
         [Key]
         public int Id { get; set; }
-        public string Plaque { get; set; } // Ex: AA-123-BB
+        public string Plaque { get; set; }
 
         public int MotorisationId { get; set; }
         [ForeignKey("MotorisationId")]
         public Motorisation Motorisation { get; set; }
 
-        public int ClientId { get; set; }
+        // CORRECTION ICI : Ajout du '?' pour autoriser un véhicule sans client
+        public int? ClientId { get; set; }
+
         [ForeignKey("ClientId")]
-        public Client Client { get; set; }
+        public Client? Client { get; set; } // Ajoute le ? ici aussi par sécurité
     }
 }
