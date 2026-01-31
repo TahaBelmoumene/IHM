@@ -2,7 +2,9 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Pièces disponibles" Height="450" Width="800"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized">
+    
     <Grid Margin="20">
         <StackPanel>
             <TextBlock x:Name="TxtTitre" Text="Pièces : [Catégorie]" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>

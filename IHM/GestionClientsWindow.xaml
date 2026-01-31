@@ -1,0 +1,35 @@
+﻿<Window x:Class="IHM.GestionClientsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Gestion Clients" Height="400" Width="600" WindowStartupLocation="CenterScreen">
+    <Grid Margin="15">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <GroupBox Header="Sélectionner un client" Grid.Column="0" Margin="0,0,10,0">
+            <StackPanel>
+                <ListBox x:Name="LstClients" Height="250" DisplayMemberPath="NomComplet" Margin="0,0,0,10"/>
+                <Button x:Name="BtnChoisir" Content="✅ ASSOCIER CE CLIENT" Height="40" 
+                        Background="#28a745" Foreground="White" FontWeight="Bold" Click="BtnChoisir_Click"/>
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox Header="Nouveau Client" Grid.Column="1">
+            <StackPanel Margin="10">
+                <TextBlock Text="Nom :"/>
+                <TextBox x:Name="TxtNom" Height="25" Margin="0,0,0,10"/>
+
+                <TextBlock Text="Prénom :"/>
+                <TextBox x:Name="TxtPrenom" Height="25" Margin="0,0,0,10"/>
+
+                <TextBlock Text="Téléphone :"/>
+                <TextBox x:Name="TxtTel" Height="25" Margin="0,0,0,20"/>
+
+                <Button Content="➕ Créer Client" Height="30" Click="BtnCreerClient_Click" 
+                        Background="#007ACC" Foreground="White"/>
+            </StackPanel>
+        </GroupBox>
+    </Grid>
+</Window>

@@ -1,4 +1,5 @@
 ﻿using Metier.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -148,6 +149,111 @@ namespace Metier.Data
             // 2. Créer le lien de compatibilité immédiatement
             AjouterCompatibilite(nouvellePiece.Id, motorisationId);
         }
+
+        public void AjouterClient(string nom, string prenom, string tel)
+        {
+            _context.Clients.Add(new Client { Nom = nom, Prenom = prenom, Telephone = tel });
+            _context.SaveChanges();
+        }
+
+        public List<Client> GetClients()
+        {
+            return _context.Clients.OrderBy(c => c.Nom).ToList();
+        }
+
+        // --- MISE À JOUR : RECHERCHE PAR PLAQUE ---
+        public VehiculeClient? GetInfosVehiculeClient(string plaque)
+        {
+            // On récupère tout : la voiture ET le client propriétaire
+            return _context.VehiculesClients
+                           .Include(v => v.Client)          // <--- On charge le client
+                           .Include(v => v.Motorisation)
+                           .ThenInclude(m => m.Generation)
+                           .ThenInclude(g => g.Modele)
+                           .ThenInclude(md => md.Marque)
+                           .FirstOrDefault(v => v.Plaque == plaque);
+        }
+
+        // --- MISE À JOUR : ENREGISTRER PLAQUE (AVEC CLIENT) ---
+        public void EnregistrerPlaque(string plaque, int motorisationId, int clientId)
+        {
+            var existant = _context.VehiculesClients.FirstOrDefault(v => v.Plaque == plaque);
+            if (existant == null)
+            {
+                _context.VehiculesClients.Add(new VehiculeClient
+                {
+                    Plaque = plaque.ToUpper(),
+                    MotorisationId = motorisationId,
+                    ClientId = clientId // <--- On lie au client
+                });
+                _context.SaveChanges();
+            }
+        }
+        public Motorisation? GetVoitureParPlaque(string plaque)
+        {
+            var vehicule = _context.VehiculesClients
+                                   .Include(v => v.Motorisation)
+                                   .ThenInclude(m => m.Generation)
+                                   .ThenInclude(g => g.Modele)
+                                   .ThenInclude(md => md.Marque)
+                                   .FirstOrDefault(v => v.Plaque == plaque);
+
+            return vehicule?.Motorisation;
+        }
+
+        // 2. Mémoriser une plaque pour la prochaine fois
+        public void EnregistrerPlaque(string plaque, int motorisationId)
+        {
+            var existant = _context.VehiculesClients.FirstOrDefault(v => v.Plaque == plaque);
+            if (existant == null)
+            {
+                _context.VehiculesClients.Add(new VehiculeClient
+                {
+                    Plaque = plaque.ToUpper(),
+                    MotorisationId = motorisationId
+                });
+                _context.SaveChanges();
+            }
+        }
+        public void AjouterClient(string nom, string prenom, string tel)
+{
+    _context.Clients.Add(new Client { Nom = nom, Prenom = prenom, Telephone = tel });
+    _context.SaveChanges();
+}
+
+public List<Client> GetClients()
+{
+    return _context.Clients.OrderBy(c => c.Nom).ToList();
+}
+
+// --- MISE À JOUR : RECHERCHE PAR PLAQUE ---
+public VehiculeClient? GetInfosVehiculeClient(string plaque)
+{
+    // On récupère tout : la voiture ET le client propriétaire
+    return _context.VehiculesClients
+                   .Include(v => v.Client)          // <--- On charge le client
+                   .Include(v => v.Motorisation)
+                   .ThenInclude(m => m.Generation)
+                   .ThenInclude(g => g.Modele)
+                   .ThenInclude(md => md.Marque)
+                   .FirstOrDefault(v => v.Plaque == plaque);
+}
+
+// --- MISE À JOUR : ENREGISTRER PLAQUE (AVEC CLIENT) ---
+public void EnregistrerPlaque(string plaque, int motorisationId, int clientId)
+{
+    var existant = _context.VehiculesClients.FirstOrDefault(v => v.Plaque == plaque);
+    if (existant == null)
+    {
+        _context.VehiculesClients.Add(new VehiculeClient 
+        { 
+            Plaque = plaque.ToUpper(), 
+            MotorisationId = motorisationId,
+            ClientId = clientId // <--- On lie au client
+        });
+        _context.SaveChanges();
+    }
+}
 
         public void InitialiserArchitectureStock()
         {
