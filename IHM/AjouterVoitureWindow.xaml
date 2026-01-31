@@ -39,7 +39,7 @@
             </StackPanel>
         </Border>
 
-        <Border x:Name="GrpModele" Grid.Row="1" Grid.Column="0" IsEnabled="False">
+        <Border x:Name="GrpModele" Grid.Row="2" Grid.Column="0" IsEnabled="False">
             <Border.Style>
                 <Style TargetType="Border">
                     <Setter Property="Background" Value="White"/>
@@ -127,7 +127,7 @@
             </StackPanel>
         </Border>
 
-        <Border x:Name="GrpMoteur" Grid.Row="1" Grid.Column="2" IsEnabled="False">
+        <Border x:Name="GrpMoteur" Grid.Row="2" Grid.Column="2" IsEnabled="False">
             <Border.Style>
                 <Style TargetType="Border">
                     <Setter Property="Background" Value="White"/>
