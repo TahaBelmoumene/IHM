@@ -1,11 +1,15 @@
 ﻿using IHM.ViewModels; // Pour accéder au ViewModel
 using Metier.Data;
+using Metier.Entities;
 using System.Windows;
 
 namespace IHM
 {
     public partial class MainWindow : Window
     {
+
+        private Client _clientEnCours;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -62,13 +66,26 @@ namespace IHM
             string plaque = TxtPlaque.Text.Trim();
 
             if (string.IsNullOrWhiteSpace(plaque)) { MessageBox.Show("Entrez une plaque !"); return; }
-            if (vm.MoteurSelected == null) { MessageBox.Show("Sélectionnez d'abord un véhicule complet."); return; }
+            if (vm.MoteurSelected == null) { MessageBox.Show("Sélectionnez d'abord un véhicule."); return; }
+            if (_clientEnCours == null) { MessageBox.Show("Veuillez d'abord sélectionner un client."); return; }
 
             GarageRepository repo = new GarageRepository();
-            repo.EnregistrerPlaque(plaque, vm.MoteurSelected.Id);
+            // Utilisation de la version du repo qui accepte le clientId
+            repo.EnregistrerPlaque(plaque, vm.MoteurSelected.Id, _clientEnCours.Id);
 
-            MessageBox.Show("✅ Plaque mémorisée ! La prochaine fois, la recherche sera automatique.");
+            MessageBox.Show($"✅ Véhicule lié à {_clientEnCours.NomComplet} !");
         }
+
+        private void BtnGestionClient_Click(object sender, RoutedEventArgs e)
+        {
+            GestionClientsWindow fenetre = new GestionClientsWindow();
+            if (fenetre.ShowDialog() == true) // Si l'utilisateur a cliqué sur "ASSOCIER CE CLIENT"
+            {
+                _clientEnCours = fenetre.ClientSelectionne;
+                TxtClientSelectionne.Text = $"Client : {_clientEnCours.NomComplet}";
+            }
+        }
+
         private void BtnVoirPieces_Click(object sender, RoutedEventArgs e)
         {
             var vm = (MainViewModel)this.DataContext;

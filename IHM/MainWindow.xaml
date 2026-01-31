@@ -11,6 +11,11 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+            <Button Content="👤 CLIENT" Click="BtnGestionClient_Click" Width="100" Height="30" Background="#6c757d" Foreground="White"/>
+            <TextBlock x:Name="TxtClientSelectionne" Text="Aucun client sélectionné" VerticalAlignment="Center" Margin="10,0,0,0" FontStyle="Italic"/>
+        </StackPanel>
+        
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
             <TextBlock Text="Plaque :" VerticalAlignment="Center" FontWeight="Bold" Margin="0,0,5,0" Foreground="#555"/>
             <TextBox x:Name="TxtPlaque" Width="100" Height="25" CharacterCasing="Upper" VerticalContentAlignment="Center" ToolTip="AA-123-BB"/>
