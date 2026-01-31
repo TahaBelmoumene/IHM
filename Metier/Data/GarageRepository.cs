@@ -1,140 +1,81 @@
-﻿using Metier.Entities;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Metier.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Metier.Data
 {
     public class GarageRepository
     {
-        private GarageContext _context;
+        private readonly GarageContext _context;
 
-        // Récupérer toutes les catégories (Moteur, Freinage, etc.)
-        // Récupérer toutes les catégories
-        public List<Categorie> GetCategories()
-        {
-            // On retourne juste la liste triée. 
-            // L'initialisation se fait désormais UNIQUEMENT dans le constructeur.
-            return _context.Categories.OrderBy(c => c.Nom).ToList();
-        }
         public GarageRepository()
         {
             _context = new GarageContext();
-            _context.Database.EnsureCreated(); // Crée le fichier vide s'il n'existe pas
-
-            // C'est cette ligne qui remplit tout ton stock au premier lancement
+            _context.Database.EnsureCreated(); // crée le fichier si nécessaire
             InitialiserArchitectureStock();
         }
 
-        public List<Marque> GetMarques()
-        {
-            return _context.Marques.OrderBy(m => m.Nom).ToList();
-        }
+        // --- Lectures simples (one-liners pour lisibilité) ---
+        public List<Categorie> GetCategories() => _context.Categories.OrderBy(c => c.Nom).ToList();
+        public List<Marque> GetMarques() => _context.Marques.OrderBy(m => m.Nom).ToList();
+        public List<Modele> GetModeles(int marqueId) => _context.Modeles.Where(m => m.MarqueId == marqueId).OrderBy(m => m.Nom).ToList();
+        public List<Generation> GetGenerations(int modeleId) => _context.Generations.Where(g => g.ModeleId == modeleId).OrderBy(g => g.AnneeDebut).ToList();
+        public List<Motorisation> GetMoteurs(int generationId) => _context.Motorisations.Where(m => m.GenerationId == generationId).OrderBy(m => m.Nom).ToList();
 
-        public List<Modele> GetModeles(int marqueId)
-        {
-            return _context.Modeles.Where(m => m.MarqueId == marqueId).OrderBy(m => m.Nom).ToList();
-        }
+        public List<Categorie> GetRayonsPrincipaux() => _context.Categories.Where(c => c.ParentId == null).OrderBy(c => c.Nom).ToList();
+        public List<Categorie> GetSousCategories(int parentId) => _context.Categories.Where(c => c.ParentId == parentId).OrderBy(c => c.Nom).ToList();
 
-        public List<Generation> GetGenerations(int modeleId)
-        {
-            return _context.Generations.Where(g => g.ModeleId == modeleId).OrderBy(g => g.AnneeDebut).ToList();
-        }
+        public List<Piece> GetPiecesParCategorie(int categorieId) => _context.Pieces.Where(p => p.CategorieId == categorieId).OrderBy(p => p.Nom).ToList();
+        public List<Piece> GetPiecesCompatibles(int categorieId, int motorisationId) =>
+            _context.Compatibilites
+                    .Where(c => c.MotorisationId == motorisationId && c.Piece.CategorieId == categorieId)
+                    .Select(c => c.Piece)
+                    .OrderBy(p => p.Nom)
+                    .ToList();
 
-        public List<Motorisation> GetMoteurs(int generationId)
-        {
-            return _context.Motorisations.Where(m => m.GenerationId == generationId).OrderBy(m => m.Nom).ToList();
-        }
-        // 1. Récupérer uniquement les Rayons principaux (ceux qui n'ont pas de parent)
-        public List<Categorie> GetRayonsPrincipaux()
-        {
-            return _context.Categories
-                           .Where(c => c.ParentId == null)
-                           .OrderBy(c => c.Nom)
-                           .ToList();
-        }
+        public List<Client> GetClients() => _context.Clients.OrderBy(c => c.Nom).ToList();
 
-        // 2. Récupérer les sous-catégories d'un parent
-        public List<Categorie> GetSousCategories(int parentId)
-        {
-            return _context.Categories
-                           .Where(c => c.ParentId == parentId)
-                           .OrderBy(c => c.Nom)
-                           .ToList();
-        }
-
-        // 3. Ajouter une catégorie (Racine ou Enfant)
+        // --- Ajouts simples ---
         public void AjouterCategorie(string nom, int? parentId = null)
         {
-            var cat = new Categorie { Nom = nom, ParentId = parentId };
-            _context.Categories.Add(cat);
+            _context.Categories.Add(new Categorie { Nom = nom, ParentId = parentId });
             _context.SaveChanges();
-        }
+        }           
 
-        // 1. CRÉER UN LIEN : Dire qu'une pièce est compatible avec une voiture
-        public void AjouterCompatibilite(int pieceId, int motorisationId)
-        {
-            // On vérifie si le lien existe déjà pour éviter les doublons
-            bool existeDeja = _context.Compatibilites
-                                      .Any(c => c.PieceId == pieceId && c.MotorisationId == motorisationId);
-
-            if (!existeDeja)
-            {
-                var lien = new Compatibilite { PieceId = pieceId, MotorisationId = motorisationId };
-                _context.Compatibilites.Add(lien);
-                _context.SaveChanges();
-            }
-        }
-
-        // 2. CONSULTER : Récupérer les pièces d'une catégorie MAIS FILTRÉES pour une voiture
-        public List<Piece> GetPiecesCompatibles(int categorieId, int motorisationId)
-        {
-            return _context.Compatibilites
-                           .Where(c => c.MotorisationId == motorisationId && c.Piece.CategorieId == categorieId)
-                           .Select(c => c.Piece) // On ne garde que la pièce, pas l'objet compatibilité
-                           .OrderBy(p => p.Nom)
-                           .ToList();
-        }
-        public List<Piece> GetPiecesParCategorie(int categorieId)
-        {
-            return _context.Pieces
-                           .Where(p => p.CategorieId == categorieId)
-                           .OrderBy(p => p.Nom)
-                           .ToList();
-        }
-        // Méthode pour remplir la BDD avec des fausses données de test
-        // 1. Ajouter Marque
         public void AjouterMarque(string nom)
         {
             _context.Marques.Add(new Marque { Nom = nom });
             _context.SaveChanges();
         }
 
-        // 2. Ajouter Modèle
         public void AjouterModele(string nom, int marqueId)
         {
             _context.Modeles.Add(new Modele { Nom = nom, MarqueId = marqueId });
             _context.SaveChanges();
         }
 
-        // 3. Ajouter Génération (ex: Clio 4, année 2012)
         public void AjouterGeneration(string nom, int annee, int modeleId)
         {
             _context.Generations.Add(new Generation { Nom = nom, AnneeDebut = annee, ModeleId = modeleId });
             _context.SaveChanges();
         }
 
-        // 4. Ajouter Motorisation
         public void AjouterMoteur(string nom, string carburant, int generationId)
         {
             _context.Motorisations.Add(new Motorisation { Nom = nom, Carburant = carburant, GenerationId = generationId });
             _context.SaveChanges();
         }
 
-        public void AjouterPiece(string nom, decimal prix, int stock, int categorieId, int motorisationId) // Ajout du paramètre
+        public void AjouterClient(string nom, string prenom, string tel)
         {
-            // 1. Créer la pièce
+            _context.Clients.Add(new Client { Nom = nom, Prenom = prenom, Telephone = tel });
+            _context.SaveChanges();
+        }
+
+        // Ajout d'une pièce et création immédiate du lien de compatibilité
+        public void AjouterPiece(string nom, decimal prix, int stock, int categorieId, int motorisationId)
+        {
             var nouvellePiece = new Piece
             {
                 Nom = nom,
@@ -144,38 +85,41 @@ namespace Metier.Data
             };
 
             _context.Pieces.Add(nouvellePiece);
-            _context.SaveChanges(); // Important : Cela génère l'ID de la nouvelle pièce
-
-            // 2. Créer le lien de compatibilité immédiatement
+            _context.SaveChanges(); // génère l'Id
             AjouterCompatibilite(nouvellePiece.Id, motorisationId);
         }
 
-        public void AjouterClient(string nom, string prenom, string tel)
+        // --- Compatibilités ---
+        public void AjouterCompatibilite(int pieceId, int motorisationId)
         {
-            _context.Clients.Add(new Client { Nom = nom, Prenom = prenom, Telephone = tel });
-            _context.SaveChanges();
+            var existeDeja = _context.Compatibilites.Any(c => c.PieceId == pieceId && c.MotorisationId == motorisationId);
+            if (!existeDeja)
+            {
+                _context.Compatibilites.Add(new Compatibilite { PieceId = pieceId, MotorisationId = motorisationId });
+                _context.SaveChanges();
+            }
         }
 
-        public List<Client> GetClients()
-        {
-            return _context.Clients.OrderBy(c => c.Nom).ToList();
-        }
+        // --- Véhicules / plaques ---
+        public VehiculeClient? GetInfosVehiculeClient(string plaque) =>
+            _context.VehiculesClients
+                    .Include(v => v.Client)
+                    .Include(v => v.Motorisation)
+                        .ThenInclude(m => m.Generation)
+                        .ThenInclude(g => g.Modele)
+                        .ThenInclude(md => md.Marque)
+                    .FirstOrDefault(v => v.Plaque == plaque);
 
-        // --- MISE À JOUR : RECHERCHE PAR PLAQUE ---
-        public VehiculeClient? GetInfosVehiculeClient(string plaque)
-        {
-            // On récupère tout : la voiture ET le client propriétaire
-            return _context.VehiculesClients
-                           .Include(v => v.Client)          // <--- On charge le client
-                           .Include(v => v.Motorisation)
-                           .ThenInclude(m => m.Generation)
-                           .ThenInclude(g => g.Modele)
-                           .ThenInclude(md => md.Marque)
-                           .FirstOrDefault(v => v.Plaque == plaque);
-        }
+        public Motorisation? GetVoitureParPlaque(string plaque) =>
+            _context.VehiculesClients
+                    .Include(v => v.Motorisation)
+                        .ThenInclude(m => m.Generation)
+                        .ThenInclude(g => g.Modele)
+                        .ThenInclude(md => md.Marque)
+                    .FirstOrDefault(v => v.Plaque == plaque)
+                    ?.Motorisation;
 
-        // --- MISE À JOUR : ENREGISTRER PLAQUE (AVEC CLIENT) ---
-        public void EnregistrerPlaque(string plaque, int motorisationId, int clientId)
+        public void EnregistrerPlaque(string plaque, int motorisationId, int? clientId = null)
         {
             var existant = _context.VehiculesClients.FirstOrDefault(v => v.Plaque == plaque);
             if (existant == null)
@@ -184,107 +128,44 @@ namespace Metier.Data
                 {
                     Plaque = plaque.ToUpper(),
                     MotorisationId = motorisationId,
-                    ClientId = clientId // <--- On lie au client
+                    ClientId = clientId
                 });
                 _context.SaveChanges();
             }
         }
-        public Motorisation? GetVoitureParPlaque(string plaque)
-        {
-            var vehicule = _context.VehiculesClients
-                                   .Include(v => v.Motorisation)
-                                   .ThenInclude(m => m.Generation)
-                                   .ThenInclude(g => g.Modele)
-                                   .ThenInclude(md => md.Marque)
-                                   .FirstOrDefault(v => v.Plaque == plaque);
 
-            return vehicule?.Motorisation;
-        }
-
-        // 2. Mémoriser une plaque pour la prochaine fois
-        public void EnregistrerPlaque(string plaque, int motorisationId)
-        {
-            var existant = _context.VehiculesClients.FirstOrDefault(v => v.Plaque == plaque);
-            if (existant == null)
-            {
-                _context.VehiculesClients.Add(new VehiculeClient
-                {
-                    Plaque = plaque.ToUpper(),
-                    MotorisationId = motorisationId
-                });
-                _context.SaveChanges();
-            }
-        }
-        public void AjouterClient(string nom, string prenom, string tel)
-{
-    _context.Clients.Add(new Client { Nom = nom, Prenom = prenom, Telephone = tel });
-    _context.SaveChanges();
-}
-
-public List<Client> GetClients()
-{
-    return _context.Clients.OrderBy(c => c.Nom).ToList();
-}
-
-// --- MISE À JOUR : RECHERCHE PAR PLAQUE ---
-public VehiculeClient? GetInfosVehiculeClient(string plaque)
-{
-    // On récupère tout : la voiture ET le client propriétaire
-    return _context.VehiculesClients
-                   .Include(v => v.Client)          // <--- On charge le client
-                   .Include(v => v.Motorisation)
-                   .ThenInclude(m => m.Generation)
-                   .ThenInclude(g => g.Modele)
-                   .ThenInclude(md => md.Marque)
-                   .FirstOrDefault(v => v.Plaque == plaque);
-}
-
-// --- MISE À JOUR : ENREGISTRER PLAQUE (AVEC CLIENT) ---
-public void EnregistrerPlaque(string plaque, int motorisationId, int clientId)
-{
-    var existant = _context.VehiculesClients.FirstOrDefault(v => v.Plaque == plaque);
-    if (existant == null)
-    {
-        _context.VehiculesClients.Add(new VehiculeClient 
-        { 
-            Plaque = plaque.ToUpper(), 
-            MotorisationId = motorisationId,
-            ClientId = clientId // <--- On lie au client
-        });
-        _context.SaveChanges();
-    }
-}
-
+        // --- Initialisation de l'architecture du stock ---
         public void InitialiserArchitectureStock()
         {
-            // SÉCURITÉ : Si la base contient déjà des catégories, on ne touche à rien
             if (_context.Categories.Any()) return;
 
-            // ====================================================================
-            // 1. RAYON : FREINAGE (On garde celui qu'on a fait avant)
-            // ====================================================================
+            // Exemple de création : on crée chaque parent, on sauvegarde pour obtenir l'Id,
+            // puis on ajoute ses enfants en lot pour garder le code lisible.
             var freinage = new Categorie { Nom = "Freinage" };
             _context.Categories.Add(freinage);
             _context.SaveChanges();
 
-            // -> Plaquettes
             var plaquettes = new Categorie { Nom = "Plaquettes de frein", ParentId = freinage.Id };
             _context.Categories.Add(plaquettes);
             _context.SaveChanges();
-            _context.Categories.Add(new Categorie { Nom = "Plaquettes de frein avant", ParentId = plaquettes.Id });
-            _context.Categories.Add(new Categorie { Nom = "Plaquettes de frein arrière", ParentId = plaquettes.Id });
-            _context.Categories.Add(new Categorie { Nom = "Témoin d'usure de frein", ParentId = plaquettes.Id });
-            _context.Categories.Add(new Categorie { Nom = "Kit de montage plaquettes", ParentId = plaquettes.Id });
 
-            // -> Disques
+            _context.Categories.AddRange(
+                new Categorie { Nom = "Plaquettes de frein avant", ParentId = plaquettes.Id },
+                new Categorie { Nom = "Plaquettes de frein arrière", ParentId = plaquettes.Id },
+                new Categorie { Nom = "Témoin d'usure de frein", ParentId = plaquettes.Id },
+                new Categorie { Nom = "Kit de montage plaquettes", ParentId = plaquettes.Id }
+            );
+
             var disques = new Categorie { Nom = "Disques de frein", ParentId = freinage.Id };
             _context.Categories.Add(disques);
             _context.SaveChanges();
-            _context.Categories.Add(new Categorie { Nom = "Disques de frein avant", ParentId = disques.Id });
-            _context.Categories.Add(new Categorie { Nom = "Disques de frein arrière", ParentId = disques.Id });
-            _context.Categories.Add(new Categorie { Nom = "Vis de disque de frein", ParentId = disques.Id });
-            _context.Categories.Add(new Categorie { Nom = "Déflecteur de disque", ParentId = disques.Id });
-            _context.Categories.Add(new Categorie { Nom = "Kit de freins à disques", ParentId = disques.Id });
+            _context.Categories.AddRange(
+                new Categorie { Nom = "Disques de frein avant", ParentId = disques.Id },
+                new Categorie { Nom = "Disques de frein arrière", ParentId = disques.Id },
+                new Categorie { Nom = "Vis de disque de frein", ParentId = disques.Id },
+                new Categorie { Nom = "Déflecteur de disque", ParentId = disques.Id },
+                new Categorie { Nom = "Kit de freins à disques", ParentId = disques.Id }
+            );
 
             // -> Tambours
             var tambours = new Categorie { Nom = "Freins à tambours", ParentId = freinage.Id };

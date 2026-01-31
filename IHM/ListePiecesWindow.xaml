@@ -9,14 +9,39 @@
         <StackPanel>
             <TextBlock x:Name="TxtTitre" Text="Pièces : [Catégorie]" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
 
-            <DataGrid x:Name="GridPieces" AutoGenerateColumns="False" IsReadOnly="True" Height="300">
+            <DataGrid x:Name="GridPieces" 
+          AutoGenerateColumns="False" 
+          IsReadOnly="True" 
+          Height="300"
+          
+          GridLinesVisibility="Horizontal"
+          HeadersVisibility="Column"
+          Background="White"
+          RowBackground="White"
+          AlternatingRowBackground="#F9F9F9"
+          BorderBrush="#DDD"
+          BorderThickness="1"
+          RowHeight="35"
+          FontSize="14">
+
+                <DataGrid.Resources>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Height" Value="40"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="Background" Value="#F0F0F0"/>
+                        <Setter Property="Padding" Value="10,0"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                    </Style>
+                </DataGrid.Resources>
+
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Nom de la pièce" Binding="{Binding Nom}" Width="*"/>
-                    <DataGridTextColumn Header="Prix (€)" Binding="{Binding Prix}" Width="100"/>
+                    <DataGridTextColumn Header="Désignation" Binding="{Binding Nom}" Width="*"/>
+
+                    <DataGridTextColumn Header="Prix" Binding="{Binding Prix, StringFormat={}{0:C}}" Width="100" FontWeight="Bold" Foreground="#28a745"/>
+
                     <DataGridTextColumn Header="Stock" Binding="{Binding Stock}" Width="80"/>
                 </DataGrid.Columns>
             </DataGrid>
-
             <Button Content="Retour" Click="BtnRetour_Click" Margin="0,20,0,0" Height="30" Width="100" HorizontalAlignment="Left"/>
         </StackPanel>
     </Grid>
