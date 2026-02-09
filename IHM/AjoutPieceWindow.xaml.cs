@@ -9,22 +9,19 @@ namespace IHM
     {
         private GarageRepository _repo;
 
-        // On ajoute le ? pour dire que ça peut être null au début
         private Categorie? _categorieFinale;
         private Motorisation? _moteurSelectionne;
 
         public AjoutPieceWindow()
         {
-            InitializeComponent(); // C'est cette ligne qui relie le XAML au C#
+            InitializeComponent(); 
             _repo = new GarageRepository();
 
             ChargerNiveau1(); // Charge les rayons
             ChargerMarques(); // Charge les marques
         }
 
-        // ==========================================================
-        // 1. GESTION DU VÉHICULE
-        // ==========================================================
+      
         private void ChargerMarques()
         {
             CboMarque.ItemsSource = _repo.GetMarques();
@@ -72,9 +69,7 @@ namespace IHM
             }
         }
 
-        // ==========================================================
-        // 2. GESTION DES RAYONS (EXISTANT)
-        // ==========================================================
+       
         private void ChargerNiveau1()
         {
             CboNiv1.ItemsSource = _repo.GetRayonsPrincipaux();
@@ -113,9 +108,7 @@ namespace IHM
             }
         }
 
-        // ==========================================================
-        // 3. VALIDATION ET ENREGISTREMENT
-        // ==========================================================
+       
         private void ValiderBouton()
         {
             bool categorieOk = _categorieFinale != null;
@@ -127,7 +120,6 @@ namespace IHM
 
         private void BtnEnregistrer_Click(object sender, RoutedEventArgs e)
         {
-            // Vérifs de base
             if (string.IsNullOrWhiteSpace(TxtNom.Text)) { MessageBox.Show("Il manque le nom !"); return; }
             if (!decimal.TryParse(TxtPrix.Text.Replace(".", ","), out decimal prix)) { MessageBox.Show("Prix invalide"); return; }
             if (!int.TryParse(TxtStock.Text, out int stock)) { MessageBox.Show("Stock invalide"); return; }
@@ -138,10 +130,9 @@ namespace IHM
                 return;
             }
 
-            // Sauvegarde avce le type de pièce
             _repo.AjouterPiece(TxtNom.Text, prix, stock, "Neuf", _categorieFinale.Id, _moteurSelectionne.Id);
 
-            MessageBox.Show($"✅ Pièce ajoutée pour {_moteurSelectionne.Nom} !");
+            MessageBox.Show($"Pièce ajoutée pour {_moteurSelectionne.Nom} !");
             this.Close();
         }
     }

@@ -9,7 +9,7 @@ namespace IHM
             InitializeComponent();
         }
 
-        // 1. Ouvre la recherche (Ton ancienne MainWindow)
+        // 1. Ouvre la recherche 
         private void BtnTrouver_Click(object sender, RoutedEventArgs e)
         {
             MainWindow fenetreRecherche = new MainWindow();

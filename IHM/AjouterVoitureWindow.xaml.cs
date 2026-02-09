@@ -21,7 +21,6 @@ namespace IHM
             ChargerMarques();
         }
 
-        // --- ZONE 1 : MARQUE ---
         private void ChargerMarques()
         {
             CboMarques.ItemsSource = _repo.GetMarques();
@@ -43,16 +42,14 @@ namespace IHM
             if (CboMarques.SelectedItem is Marque m)
             {
                 _marqueEnCours = m;
-                GrpModele.IsEnabled = true; // On débloque l'étape suivante
+                GrpModele.IsEnabled = true; 
                 ChargerModeles();
 
-                // On reset les étapes d'après pour éviter les mélanges
                 GrpGeneration.IsEnabled = false;
                 GrpMoteur.IsEnabled = false;
             }
         }
 
-        // --- ZONE 2 : MODÈLE ---
         private void ChargerModeles()
         {
             if (_marqueEnCours != null)
@@ -81,7 +78,6 @@ namespace IHM
             }
         }
 
-        // --- ZONE 3 : GÉNÉRATION ---
         private void ChargerGenerations()
         {
             if (_modeleEnCours != null)
@@ -112,8 +108,7 @@ namespace IHM
             }
         }
 
-        // --- ZONE 4 : MOTEUR ---
-        private void BtnAjoutMoteur_Click(object sender, RoutedEventArgs e)
+m        private void BtnAjoutMoteur_Click(object sender, RoutedEventArgs e)
         {
             string nomMoteur = TxtMoteurNom.Text;
             string carburant = (CboCarburant.SelectedItem as ComboBoxItem)?.Content.ToString();
