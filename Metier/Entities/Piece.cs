@@ -1,20 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Metier.Entities
+﻿namespace Metier.Entities
 {
-    [Table("Pieces")]
     public class Piece
     {
-        [Key]
         public int Id { get; set; }
-        public string Nom { get; set; } // Ex: "Filtre à huile"
+        public string Nom { get; set; }
         public decimal Prix { get; set; }
         public int Stock { get; set; }
-
-        // Lien avec la catégorie
+        public string Etat { get; set; } 
         public int CategorieId { get; set; }
-        [ForeignKey("CategorieId")]
         public Categorie Categorie { get; set; }
     }
 }

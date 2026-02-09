@@ -138,8 +138,8 @@ namespace IHM
                 return;
             }
 
-            // Sauvegarde
-            _repo.AjouterPiece(TxtNom.Text, prix, stock, _categorieFinale.Id, _moteurSelectionne.Id);
+            // Sauvegarde avce le type de pièce
+            _repo.AjouterPiece(TxtNom.Text, prix, stock, "Neuf", _categorieFinale.Id, _moteurSelectionne.Id);
 
             MessageBox.Show($"✅ Pièce ajoutée pour {_moteurSelectionne.Nom} !");
             this.Close();

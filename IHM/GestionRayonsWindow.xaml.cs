@@ -18,7 +18,6 @@ namespace IHM
             ChargerNiveau1();
         }
 
-        // --- NIVEAU 1 : LES RAYONS (ex: Moteur, Freinage...) ---
         private void ChargerNiveau1()
         {
             LstNiveau1.ItemsSource = _repo.GetRayonsPrincipaux();
@@ -40,7 +39,6 @@ namespace IHM
             {
                 _parentNiv1 = cat;
 
-                // On active la colonne suivante
                 GrpNiveau2.IsEnabled = true;
                 GrpNiveau3.IsEnabled = false; // On désactive la 3ème par sécurité
 
@@ -49,7 +47,6 @@ namespace IHM
             }
         }
 
-        // --- NIVEAU 2 : LES FAMILLES (ex: Disques, Plaquettes...) ---
         private void ChargerNiveau2()
         {
             if (_parentNiv1 != null)
@@ -78,7 +75,6 @@ namespace IHM
             }
         }
 
-        // --- NIVEAU 3 : LES TYPES (ex: Avant, Arrière...) ---
         private void ChargerNiveau3()
         {
             if (_parentNiv2 != null)
