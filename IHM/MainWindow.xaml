@@ -8,29 +8,36 @@
         <StackPanel>
             <TextBlock Text="Identifier le véhicule" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
 
-            <TextBlock Text="Marque :"/>
+            <TextBlock Text="Origine du véhicule :"/>
+            <ComboBox ItemsSource="{Binding ListeOrigines}" 
+              SelectedItem="{Binding OrigineSelected}"
+              DisplayMemberPath="Nom" Margin="0,5,0,15"/>
+
+            <TextBlock Text="Marque / Groupe :"/>
             <ComboBox ItemsSource="{Binding ListeMarques}" 
-                      SelectedItem="{Binding MarqueSelected}"
-                      DisplayMemberPath="Nom" Margin="0,5,0,15"/>
+              SelectedItem="{Binding MarqueSelected}"
+              DisplayMemberPath="Nom" Margin="0,5,0,15"
+              IsEnabled="{Binding OrigineSelected, Converter={StaticResource NullToBoolConverter}}"/>
 
             <TextBlock Text="Modèle :"/>
             <ComboBox ItemsSource="{Binding ListeModeles}" 
-                      SelectedItem="{Binding ModeleSelected}"
-                      DisplayMemberPath="Nom" Margin="0,5,0,15"/>
+              SelectedItem="{Binding ModeleSelected}"
+              DisplayMemberPath="Nom" Margin="0,5,0,15"
+              IsEnabled="{Binding MarqueSelected, Converter={StaticResource NullToBoolConverter}}"/>
 
             <TextBlock Text="Année / Version :"/>
             <ComboBox ItemsSource="{Binding ListeGenerations}" 
-                      SelectedItem="{Binding GenerationSelected}"
-                      DisplayMemberPath="Nom" Margin="0,5,0,15"/>
+              SelectedItem="{Binding GenerationSelected}"
+              DisplayMemberPath="Nom" Margin="0,5,0,15"/>
 
             <TextBlock Text="Motorisation :"/>
             <ComboBox ItemsSource="{Binding ListeMoteurs}" 
-                      SelectedItem="{Binding MoteurSelected}"
-                      DisplayMemberPath="Nom" Margin="0,5,0,30"/>
+              SelectedItem="{Binding MoteurSelected}"
+              DisplayMemberPath="Nom" Margin="0,5,0,30"/>
 
             <Button Content="VOIR LES PIÈCES DISPONIBLES" 
-        Height="40" Background="#007ACC" Foreground="White"
-        Click="BtnVoirPieces_Click"/>
+            Height="40" Background="#007ACC" Foreground="White"
+            Click="BtnVoirPieces_Click"/>
         </StackPanel>
     </Grid>
 </Window>

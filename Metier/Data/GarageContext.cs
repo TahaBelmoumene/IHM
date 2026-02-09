@@ -16,7 +16,6 @@ public class GarageContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        
         optionsBuilder.UseSqlite("Data Source=garage.db");
     }
 }

@@ -15,10 +15,11 @@ namespace Metier.Data
             _context.Database.EnsureCreated();
             InitialiserArchitectureStock();
         }
-/// <summary>
-/// lecteurs 
-/// </summary>
-/// <returns></returns>
+        /// <summary>
+        /// lecteurs 
+        /// </summary>
+        /// <returns></returns>
+
         public List<Categorie> GetCategories() => _context.Categories.OrderBy(c => c.Nom).ToList();
         public List<Marque> GetMarques() => _context.Marques.OrderBy(m => m.Nom).ToList();
         public List<Modele> GetModeles(int marqueId) => _context.Modeles.Where(m => m.MarqueId == marqueId).OrderBy(m => m.Nom).ToList();
@@ -27,9 +28,11 @@ namespace Metier.Data
 
         public List<Categorie> GetRayonsPrincipaux() => _context.Categories.Where(c => c.ParentId == null).OrderBy(c => c.Nom).ToList();
         public List<Categorie> GetSousCategories(int parentId) => _context.Categories.Where(c => c.ParentId == parentId).OrderBy(c => c.Nom).ToList();
-
+            
         public List<Piece> GetPiecesParCategorie(int categorieId) => _context.Pieces.Where(p => p.CategorieId == categorieId).OrderBy(p => p.Nom).ToList();
 
+        public List<Marque> GetOrigines() => _context.Marques.Where(m => m.ParentId == null).OrderBy(m => m.Nom).ToList();
+        public List<Marque> GetMarquesParOrigine(int origineId) => _context.Marques.Where(m => m.ParentId == origineId).OrderBy(m => m.Nom).ToList();
         public List<Piece> GetPiecesCompatibles(int categorieId, int motorisationId) =>
             _context.Compatibilites
                     .Where(c => c.MotorisationId == motorisationId && c.Piece.CategorieId == categorieId)
@@ -38,6 +41,7 @@ namespace Metier.Data
                     .ToList();
 
         public List<Client> GetClients() => _context.Clients.OrderBy(c => c.Nom).ToList();
+
 
         public void AjouterCategorie(string nom, int? parentId = null)
         {
@@ -75,7 +79,6 @@ namespace Metier.Data
             _context.SaveChanges();
         }
 
-        // --- GESTION DES PIÈCES (AVEC ÉTAT) ---
         public void AjouterPiece(string nom, decimal prix, int stock, string etat, int categorieId, int motorisationId)
         {
             var nouvellePiece = new Piece
@@ -115,7 +118,6 @@ namespace Metier.Data
             }
         }
 
-        // --- VÉHICULE CLIENT ---
         public VehiculeClient? GetInfosVehiculeClient(string plaque) =>
             _context.VehiculesClients
                     .Include(v => v.Client)
@@ -168,6 +170,33 @@ namespace Metier.Data
             return query.ToList<object>();
         }
 
+        public void InitialiserArchitectureMarques()
+        {
+            if (_context.Marques.Any()) return;
+
+            // 1. Origines
+            var francaise = new Marque { Nom = "Française" };
+            var allemande = new Marque { Nom = "Allemande" };
+            var italienne = new Marque { Nom = "Italienne" };
+
+            _context.Marques.AddRange(francaise, allemande, italienne);
+            _context.SaveChanges();
+
+            // 2. Sous-catégories (Marques ou Groupes)
+            // Française
+            _context.Marques.Add(new Marque { Nom = "PSA", ParentId = francaise.Id });
+            _context.Marques.Add(new Marque { Nom = "Renault", ParentId = francaise.Id });
+
+            // Allemande
+            _context.Marques.Add(new Marque { Nom = "Volkswagen", ParentId = allemande.Id });
+            _context.Marques.Add(new Marque { Nom = "Audi", ParentId = allemande.Id });
+            _context.Marques.Add(new Marque { Nom = "Mercedes", ParentId = allemande.Id });
+
+            // Italienne
+            _context.Marques.Add(new Marque { Nom = "Fiat", ParentId = italienne.Id });
+            _context.Marques.Add(new Marque { Nom = "Alfa Romeo", ParentId = italienne.Id });
+
+            _context.SaveChanges();
         public void InitialiserArchitectureStock()
         {
             if (_context.Categories.Any()) return;
