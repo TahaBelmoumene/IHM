@@ -14,11 +14,8 @@ namespace Metier.Data
             _context = new GarageContext();
             _context.Database.EnsureCreated();
             InitialiserArchitectureStock();
+            InitialiserArchitectureMarques();
         }
-        /// <summary>
-        /// lecteurs 
-        /// </summary>
-        /// <returns></returns>
 
         public List<Categorie> GetCategories() => _context.Categories.OrderBy(c => c.Nom).ToList();
         public List<Marque> GetMarques() => _context.Marques.OrderBy(m => m.Nom).ToList();
@@ -28,11 +25,12 @@ namespace Metier.Data
 
         public List<Categorie> GetRayonsPrincipaux() => _context.Categories.Where(c => c.ParentId == null).OrderBy(c => c.Nom).ToList();
         public List<Categorie> GetSousCategories(int parentId) => _context.Categories.Where(c => c.ParentId == parentId).OrderBy(c => c.Nom).ToList();
-            
+
         public List<Piece> GetPiecesParCategorie(int categorieId) => _context.Pieces.Where(p => p.CategorieId == categorieId).OrderBy(p => p.Nom).ToList();
 
         public List<Marque> GetOrigines() => _context.Marques.Where(m => m.ParentId == null).OrderBy(m => m.Nom).ToList();
         public List<Marque> GetMarquesParOrigine(int origineId) => _context.Marques.Where(m => m.ParentId == origineId).OrderBy(m => m.Nom).ToList();
+
         public List<Piece> GetPiecesCompatibles(int categorieId, int motorisationId) =>
             _context.Compatibilites
                     .Where(c => c.MotorisationId == motorisationId && c.Piece.CategorieId == categorieId)
@@ -41,7 +39,6 @@ namespace Metier.Data
                     .ToList();
 
         public List<Client> GetClients() => _context.Clients.OrderBy(c => c.Nom).ToList();
-
 
         public void AjouterCategorie(string nom, int? parentId = null)
         {
@@ -170,38 +167,94 @@ namespace Metier.Data
             return query.ToList<object>();
         }
 
+        public void AjouterMarque(string nom, int? parentId = null)
+        {
+            var existe = _context.Marques.Any(m => m.Nom == nom && m.ParentId == parentId);
+
+            if (!existe)
+            {
+                _context.Marques.Add(new Marque { Nom = nom, ParentId = parentId });
+                _context.SaveChanges();
+            }
+        }
+
+
         public void InitialiserArchitectureMarques()
         {
             if (_context.Marques.Any()) return;
 
-            // 1. Origines
             var francaise = new Marque { Nom = "Française" };
             var allemande = new Marque { Nom = "Allemande" };
             var italienne = new Marque { Nom = "Italienne" };
+            var japonaise = new Marque { Nom = "Japonaise" };
+            var americaine = new Marque { Nom = "Américaine" };
+            var autre = new Marque { Nom = "Autre" };
 
-            _context.Marques.AddRange(francaise, allemande, italienne);
+            _context.Marques.AddRange(francaise, allemande, italienne, japonaise, americaine, autre);
             _context.SaveChanges();
 
-            // 2. Sous-catégories (Marques ou Groupes)
-            // Française
             _context.Marques.Add(new Marque { Nom = "PSA", ParentId = francaise.Id });
             _context.Marques.Add(new Marque { Nom = "Renault", ParentId = francaise.Id });
 
-            // Allemande
             _context.Marques.Add(new Marque { Nom = "Volkswagen", ParentId = allemande.Id });
             _context.Marques.Add(new Marque { Nom = "Audi", ParentId = allemande.Id });
             _context.Marques.Add(new Marque { Nom = "Mercedes", ParentId = allemande.Id });
+            _context.Marques.Add(new Marque { Nom = "BMW", ParentId = allemande.Id });
 
-            // Italienne
             _context.Marques.Add(new Marque { Nom = "Fiat", ParentId = italienne.Id });
             _context.Marques.Add(new Marque { Nom = "Alfa Romeo", ParentId = italienne.Id });
+            _context.Marques.Add(new Marque { Nom = "Ferrari", ParentId = italienne.Id });
+
+            _context.Marques.Add(new Marque { Nom = "Toyota", ParentId = japonaise.Id });
+            _context.Marques.Add(new Marque { Nom = "Nissan", ParentId = japonaise.Id });
+            _context.Marques.Add(new Marque { Nom = "Honda", ParentId = japonaise.Id });
+
+            _context.Marques.Add(new Marque { Nom = "Ford", ParentId = americaine.Id });
+            _context.Marques.Add(new Marque { Nom = "Tesla", ParentId = americaine.Id });
+            _context.Marques.Add(new Marque { Nom = "Chevrolet", ParentId = americaine.Id });
+
+            _context.Marques.Add(new Marque { Nom = "Divers", ParentId = autre.Id });
 
             _context.SaveChanges();
+        }
+        // Ajoutez ceci dans Metier/Data/GarageRepository.cs
+
+        public void AjouterPackDemarrage(int motorisationId)
+        {
+            var listeStandard = new List<(string Categorie, string NomPiece, decimal Prix)>
+    {
+        ("Filtre à huile", "Filtre à huile Standard", 15),
+        ("Filtre à air", "Filtre à air Standard", 20),
+        ("Filtre habitacle", "Filtre habitacle Charbon", 25),
+        ("Plaquettes Avant", "Jeu de plaquettes Avant", 45),
+        ("Plaquettes Arrière", "Jeu de plaquettes Arrière", 35),
+        ("Disques Avant", "Jeu de disques Avant", 80),
+        ("Batterie", "Batterie 12V 60Ah", 90),
+        ("Essuie-glace", "Balais d'essuie-glace Avant", 25), 
+        ("Alternateur", "Alternateur Standard", 150),
+        ("Démarreur", "Démarreur Standard", 120)
+    };
+
+            foreach (var item in listeStandard)
+            {
+                var categorie = _context.Categories.FirstOrDefault(c => c.Nom == item.Categorie);
+
+                if (categorie != null)
+                {
+                    bool existe = _context.Compatibilites
+                        .Any(c => c.MotorisationId == motorisationId && c.Piece.Nom == item.NomPiece);
+
+                    if (!existe)
+                    {
+                        AjouterPiece(item.NomPiece, item.Prix, 1, "Neuf", categorie.Id, motorisationId);
+                    }
+                }
+            }
+        }
         public void InitialiserArchitectureStock()
         {
             if (_context.Categories.Any()) return;
 
-            // 1. FREINAGE
             var freinage = new Categorie { Nom = "Freinage" };
             _context.Categories.Add(freinage); _context.SaveChanges();
 
@@ -215,7 +268,6 @@ namespace Metier.Data
             _context.Categories.Add(new Categorie { Nom = "Disques Avant", ParentId = disques.Id });
             _context.Categories.Add(new Categorie { Nom = "Disques Arrière", ParentId = disques.Id });
 
-            // 2. FILTRATION
             var filtration = new Categorie { Nom = "Filtration" };
             _context.Categories.Add(filtration); _context.SaveChanges();
             var filtres = new Categorie { Nom = "Filtres", ParentId = filtration.Id };
@@ -225,7 +277,6 @@ namespace Metier.Data
             _context.Categories.Add(new Categorie { Nom = "Filtre à carburant", ParentId = filtres.Id });
             _context.Categories.Add(new Categorie { Nom = "Filtre habitacle", ParentId = filtres.Id });
 
-            // 3. DIRECTION & SUSPENSION
             var direction = new Categorie { Nom = "Direction - Suspension" };
             _context.Categories.Add(direction); _context.SaveChanges();
 
@@ -242,7 +293,6 @@ namespace Metier.Data
             _context.Categories.Add(new Categorie { Nom = "Crémaillère", ParentId = dir.Id });
             _context.Categories.Add(new Categorie { Nom = "Biellette", ParentId = dir.Id });
 
-            // 4. EMBRAYAGE & BOITE
             var transmission = new Categorie { Nom = "Embrayage - Boîte" };
             _context.Categories.Add(transmission); _context.SaveChanges();
 
@@ -257,7 +307,6 @@ namespace Metier.Data
             _context.Categories.Add(new Categorie { Nom = "Cardan", ParentId = trans.Id });
             _context.Categories.Add(new Categorie { Nom = "Soufflet", ParentId = trans.Id });
 
-            // 5. MOTEUR
             var moteur = new Categorie { Nom = "Pièces Moteur" };
             _context.Categories.Add(moteur); _context.SaveChanges();
 
@@ -271,7 +320,6 @@ namespace Metier.Data
             _context.Categories.Add(new Categorie { Nom = "Injecteur", ParentId = inj.Id });
             _context.Categories.Add(new Categorie { Nom = "Turbo", ParentId = inj.Id });
 
-            // 6. ÉLECTRICITÉ
             var elec = new Categorie { Nom = "Démarrage & Charge" };
             _context.Categories.Add(elec); _context.SaveChanges();
             var demarreur = new Categorie { Nom = "Démarrage", ParentId = elec.Id };
@@ -280,7 +328,6 @@ namespace Metier.Data
             _context.Categories.Add(new Categorie { Nom = "Alternateur", ParentId = demarreur.Id });
             _context.Categories.Add(new Categorie { Nom = "Démarreur", ParentId = demarreur.Id });
 
-            // 7. ÉCHAPPEMENT 
             var echappement = new Categorie { Nom = "Échappement" };
             _context.Categories.Add(echappement); _context.SaveChanges();
             var pot = new Categorie { Nom = "Silencieux & Tuyaux", ParentId = echappement.Id };
@@ -289,7 +336,6 @@ namespace Metier.Data
             _context.Categories.Add(new Categorie { Nom = "Catalyseur", ParentId = pot.Id });
             _context.Categories.Add(new Categorie { Nom = "Vanne EGR", ParentId = pot.Id });
 
-            // 8. ROUES
             var roues = new Categorie { Nom = "Roues & Jantes" };
             _context.Categories.Add(roues); _context.SaveChanges();
             var jante = new Categorie { Nom = "Jantes", ParentId = roues.Id };

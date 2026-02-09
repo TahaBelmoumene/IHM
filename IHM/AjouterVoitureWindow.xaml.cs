@@ -9,7 +9,7 @@ namespace IHM
     {
         private GarageRepository _repo;
 
-        // On stocke les sélections en cours
+        private Marque _origineEnCours;
         private Marque _marqueEnCours;
         private Modele _modeleEnCours;
         private Generation _genEnCours;
@@ -18,22 +18,50 @@ namespace IHM
         {
             InitializeComponent();
             _repo = new GarageRepository();
-            ChargerMarques();
+            ChargerOrigines();
+        }
+
+        private void ChargerOrigines()
+        {
+            CboOrigines.ItemsSource = _repo.GetOrigines();
+        }
+
+        private void CboOrigines_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (CboOrigines.SelectedItem is Marque origine)
+            {
+                _origineEnCours = origine;
+
+                CboMarques.IsEnabled = true;
+                ChargerMarques();
+
+                GrpModele.IsEnabled = false;
+                GrpGeneration.IsEnabled = false;
+                GrpMoteur.IsEnabled = false;
+            }
         }
 
         private void ChargerMarques()
         {
-            CboMarques.ItemsSource = _repo.GetMarques();
+            if (_origineEnCours != null)
+                CboMarques.ItemsSource = _repo.GetMarquesParOrigine(_origineEnCours.Id);
         }
 
         private void BtnAjoutMarque_Click(object sender, RoutedEventArgs e)
         {
+            if (_origineEnCours == null)
+            {
+                MessageBox.Show("Veuillez d'abord sélectionner une Origine !");
+                return;
+            }
+
             if (!string.IsNullOrWhiteSpace(TxtMarque.Text))
             {
-                _repo.AjouterMarque(TxtMarque.Text);
+                _repo.AjouterMarque(TxtMarque.Text, _origineEnCours.Id);
+
                 TxtMarque.Text = "";
-                ChargerMarques(); // Rafraîchir la liste
-                MessageBox.Show("Marque ajoutée ! Sélectionnez-la dans la liste.");
+                ChargerMarques();
+                MessageBox.Show($"Marque ajoutée dans la catégorie {_origineEnCours.Nom} !");
             }
         }
 
@@ -42,7 +70,7 @@ namespace IHM
             if (CboMarques.SelectedItem is Marque m)
             {
                 _marqueEnCours = m;
-                GrpModele.IsEnabled = true; 
+                GrpModele.IsEnabled = true;
                 ChargerModeles();
 
                 GrpGeneration.IsEnabled = false;
@@ -72,7 +100,7 @@ namespace IHM
             if (CboModeles.SelectedItem is Modele m)
             {
                 _modeleEnCours = m;
-                GrpGeneration.IsEnabled = true; // On débloque l'étape suivante
+                GrpGeneration.IsEnabled = true;
                 ChargerGenerations();
                 GrpMoteur.IsEnabled = false;
             }
@@ -104,11 +132,11 @@ namespace IHM
             if (CboGenerations.SelectedItem is Generation g)
             {
                 _genEnCours = g;
-                GrpMoteur.IsEnabled = true; // On débloque la dernière étape
+                GrpMoteur.IsEnabled = true;
             }
         }
 
-       private void BtnAjoutMoteur_Click(object sender, RoutedEventArgs e)
+        private void BtnAjoutMoteur_Click(object sender, RoutedEventArgs e)
         {
             string nomMoteur = TxtMoteurNom.Text;
             string carburant = (CboCarburant.SelectedItem as ComboBoxItem)?.Content.ToString();

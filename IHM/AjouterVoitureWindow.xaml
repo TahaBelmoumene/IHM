@@ -10,16 +10,23 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <GroupBox Header="1. Marque" Grid.Column="0" VerticalAlignment="Top" Height="163" Margin="5,5,5,0" Padding="10" Background="White">
-            <StackPanel Height="123">
-                <TextBlock Text="Créer une nouvelle marque :"/>
+        <GroupBox Header="1. Origine &amp; Marque" Grid.Column="0" VerticalAlignment="Top" Height="220" Margin="5,5,5,0" Padding="10" Background="White">
+            <StackPanel>
+                <TextBlock Text="Origine (ex: Japonaise) :"/>
+                <ComboBox x:Name="CboOrigines" SelectionChanged="CboOrigines_SelectionChanged" 
+                  DisplayMemberPath="Nom" Height="25" Margin="0,5,0,10" FontWeight="Bold"/>
+
+                <TextBlock Text="Marque (Sélectionner ou Créer) :"/>
+
+                <ComboBox x:Name="CboMarques" SelectionChanged="CboMarques_SelectionChanged" 
+                  DisplayMemberPath="Nom" Height="25" Margin="0,5" IsEnabled="False"/>
+
                 <StackPanel Orientation="Horizontal" Margin="0,5">
-                    <TextBox x:Name="TxtMarque" Width="200" Height="25"/>
-                    <Button Content="Ajouter" Width="80" Margin="10,0,0,0" Click="BtnAjoutMarque_Click" Background="#28a745" Foreground="White"/>
+                    <TextBox x:Name="TxtMarque" Width="180" Height="25" ToolTip="Nom de la nouvelle marque"/>
+                    <Button Content="Créer" Width="90" Margin="10,0,0,0" 
+                    Click="BtnAjoutMarque_Click" Background="#28a745" Foreground="White"
+                    ToolTip="Ajoute cette marque à l'origine sélectionnée"/>
                 </StackPanel>
-                <TextBlock Text="Ou sélectionner existante :" Margin="0,10,0,0" FontStyle="Italic"/>
-                <ComboBox x:Name="CboMarques" SelectionChanged="CboMarques_SelectionChanged" DisplayMemberPath="Nom" 
-          Height="23" FontSize="16" VerticalContentAlignment="Center" Margin="0,5"/>
             </StackPanel>
         </GroupBox>
 
