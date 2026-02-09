@@ -6,16 +6,31 @@ using System.Runtime.CompilerServices;
 
 namespace IHM.ViewModels
 {
+    /// <summary>
+    /// Donnes les observables et permet de ne pas recopier et coller son code. 
+    /// </summary>
     public class MainViewModel : INotifyPropertyChanged
     {
+        #region Champs et constructeur
         private GarageRepository _repo;
 
+        public MainViewModel()
+        {
+            _repo = new GarageRepository();
+            foreach (var o in _repo.GetOrigines())
+                ListeOrigines.Add(o);
+        }
+        #endregion
+
+        #region Collections exposées
         public ObservableCollection<Marque> ListeOrigines { get; set; } = new();
         public ObservableCollection<Marque> ListeMarques { get; set; } = new();
         public ObservableCollection<Modele> ListeModeles { get; set; } = new();
         public ObservableCollection<Generation> ListeGenerations { get; set; } = new();
         public ObservableCollection<Motorisation> ListeMoteurs { get; set; } = new();
+        #endregion
 
+        #region Propriétés de sélection
         private Marque _origineSelected;
         public Marque OrigineSelected
         {
@@ -60,14 +75,9 @@ namespace IHM.ViewModels
             get => _moteurSelected;
             set { _moteurSelected = value; OnPropertyChanged(); }
         }
+        #endregion
 
-        public MainViewModel()
-        {
-            _repo = new GarageRepository();
-            foreach (var o in _repo.GetOrigines())
-                ListeOrigines.Add(o);
-        }
-
+        #region Méthodes pour charger les listes
         private void ChargerMarques()
         {
             ListeMarques.Clear(); ListeModeles.Clear(); ListeGenerations.Clear(); ListeMoteurs.Clear();
@@ -99,9 +109,12 @@ namespace IHM.ViewModels
                 foreach (var m in _repo.GetMoteurs(GenerationSelected.Id))
                     ListeMoteurs.Add(m);
         }
+        #endregion
 
+        #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        #endregion
     }
 }

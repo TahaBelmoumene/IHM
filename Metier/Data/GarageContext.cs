@@ -1,8 +1,10 @@
-﻿using Metier.Entities;
-using Microsoft.EntityFrameworkCore;
-
-public class GarageContext : DbContext
-{
+﻿    using Metier.Entities;
+    using Microsoft.EntityFrameworkCore;
+    
+namespace Metier.Entities
+{ 
+    public class GarageContext : DbContext
+    {
     public DbSet<Client> Clients { get; set; }
     public DbSet<VehiculeClient> VehiculesClients { get; set; }
     public DbSet<Marque> Marques { get; set; }
@@ -15,7 +17,8 @@ public class GarageContext : DbContext
     public DbSet<Compatibilite> Compatibilites { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
+        {
         optionsBuilder.UseSqlite("Data Source=garage.db");
+        }
     }
 }

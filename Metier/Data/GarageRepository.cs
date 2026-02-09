@@ -3,10 +3,16 @@ using System.Linq;
 using Metier.Entities;
 using Microsoft.EntityFrameworkCore;
 
+
+
 namespace Metier.Data
 {
+    /// <summary>
+    /// donnes les méthodes permettant de faire l'ajout modification et toutes ce qui est compatibilités et gestion. 
+    /// </summary>
     public class GarageRepository
     {
+        #region Champs et constructeur
         private readonly GarageContext _context;
 
         public GarageRepository()
@@ -16,7 +22,9 @@ namespace Metier.Data
             InitialiserArchitectureStock();
             InitialiserArchitectureMarques();
         }
+        #endregion
 
+        #region getters
         public List<Categorie> GetCategories() => _context.Categories.OrderBy(c => c.Nom).ToList();
         public List<Marque> GetMarques() => _context.Marques.OrderBy(m => m.Nom).ToList();
         public List<Modele> GetModeles(int marqueId) => _context.Modeles.Where(m => m.MarqueId == marqueId).OrderBy(m => m.Nom).ToList();
@@ -39,7 +47,9 @@ namespace Metier.Data
                     .ToList();
 
         public List<Client> GetClients() => _context.Clients.OrderBy(c => c.Nom).ToList();
+        #endregion
 
+        #region Gestion des entités 
         public void AjouterCategorie(string nom, int? parentId = null)
         {
             _context.Categories.Add(new Categorie { Nom = nom, ParentId = parentId });
@@ -119,7 +129,9 @@ namespace Metier.Data
                 _context.SaveChanges();
             }
         }
+        #endregion
 
+        #region Méthodes liées aux véhicules et compatibilités
         public VehiculeClient? GetInfosVehiculeClient(string plaque) =>
             _context.VehiculesClients
                     .Include(v => v.Client)
@@ -171,7 +183,9 @@ namespace Metier.Data
 
             return query.ToList<object>();
         }
+        #endregion
 
+        #region Packs et initialisations
         public void AjouterPackDemarrage(int motorisationId)
         {
             var listeStandard = new List<(string Categorie, string NomPiece, decimal Prix)>
@@ -349,5 +363,6 @@ namespace Metier.Data
 
             _context.SaveChanges();
         }
+        #endregion
     }
 }
