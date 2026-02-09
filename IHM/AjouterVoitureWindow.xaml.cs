@@ -108,7 +108,7 @@ namespace IHM
             }
         }
 
-m        private void BtnAjoutMoteur_Click(object sender, RoutedEventArgs e)
+       private void BtnAjoutMoteur_Click(object sender, RoutedEventArgs e)
         {
             string nomMoteur = TxtMoteurNom.Text;
             string carburant = (CboCarburant.SelectedItem as ComboBoxItem)?.Content.ToString();
