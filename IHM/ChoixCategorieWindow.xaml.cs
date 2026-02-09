@@ -18,13 +18,11 @@ namespace IHM
 
             TxtTitreVoiture.Text = $"Recherche pour : {voiture.Nom}";
 
-            // On ne charge que le premier niveau (Rayons) au démarrage
             ChargerNiveau(null);
         }
 
         private void ChargerNiveau(int? parentId)
         {
-            // Utilise les méthodes existantes de votre Repository
             var liste = (parentId == null)
                 ? _repo.GetRayonsPrincipaux()
                 : _repo.GetSousCategories(parentId.Value);
@@ -36,18 +34,15 @@ namespace IHM
         {
             if (LstCategories.SelectedItem is Categorie selection)
             {
-                // On vérifie s'il y a des enfants (Familles ou Types)
                 var enfants = _repo.GetSousCategories(selection.Id);
 
                 if (enfants.Count > 0)
                 {
-                    // Si oui, on affiche le niveau suivant
                     TxtTitreVoiture.Text = $"Rayon : {selection.Nom}";
                     LstCategories.ItemsSource = enfants;
                 }
                 else
                 {
-                    // Si non (c'est le niveau final), on affiche les pièces
                     ListePiecesWindow fenetre = new ListePiecesWindow(selection, _voitureChoisie);
                     fenetre.ShowDialog();
                 }

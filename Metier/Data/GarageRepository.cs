@@ -244,7 +244,6 @@ namespace Metier.Data
             }
             else
             {
-                // Patch pour ajouter "Autre" si manquant dans une base existante
                 if (!_context.Marques.Any(m => m.Nom == "Autre" && m.ParentId == null))
                 {
                     var autre = new Marque { Nom = "Autre" };

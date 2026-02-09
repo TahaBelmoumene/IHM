@@ -4,19 +4,17 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace IHM.ViewModels // J'ai rangé ça proprement
+namespace IHM.ViewModels 
 {
     public class MainViewModel : INotifyPropertyChanged
     {
         private GarageRepository _repo;
 
-        // --- Tes listes ---
         public ObservableCollection<Marque> ListeMarques { get; set; } = new();
         public ObservableCollection<Modele> ListeModeles { get; set; } = new();
         public ObservableCollection<Generation> ListeGenerations { get; set; } = new();
         public ObservableCollection<Motorisation> ListeMoteurs { get; set; } = new();
 
-        // --- Tes sélections ---
         private Marque _marqueSelected;
         public Marque MarqueSelected
         {
@@ -47,7 +45,6 @@ namespace IHM.ViewModels // J'ai rangé ça proprement
 
         public MainViewModel()
         {
-            // IMPORTANT : Assure-toi que GarageRepository est bien "public" dans le projet Metier
             _repo = new GarageRepository();
             var marques = _repo.GetMarques();
             foreach (var m in marques) ListeMarques.Add(m);

@@ -64,7 +64,6 @@ namespace IHM.ViewModels
         public MainViewModel()
         {
             _repo = new GarageRepository();
-            // Chargement initial des Origines (Italienne, Française, Allemande)
             foreach (var o in _repo.GetOrigines())
                 ListeOrigines.Add(o);
         }
