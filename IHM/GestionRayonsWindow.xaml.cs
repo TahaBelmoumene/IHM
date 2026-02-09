@@ -8,8 +8,8 @@ namespace IHM
     public partial class GestionRayonsWindow : Window
     {
         private GarageRepository _repo;
-        private Categorie _parentNiv1; // Le Rayon sélectionné (ex: Freinage)
-        private Categorie _parentNiv2; // La Famille sélectionnée (ex: Plaquettes)
+        private Categorie _parentNiv1;
+        private Categorie _parentNiv2;
 
         public GestionRayonsWindow()
         {
@@ -25,11 +25,21 @@ namespace IHM
 
         private void BtnAjoutNiv1_Click(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(TxtNiveau1.Text))
+            string nom = TxtNiveau1.Text;
+            if (!string.IsNullOrWhiteSpace(nom))
             {
-                _repo.AjouterCategorie(TxtNiveau1.Text, null); // Pas de parent
+                _repo.AjouterCategorie(nom, null);
                 TxtNiveau1.Text = "";
                 ChargerNiveau1();
+
+                foreach (Categorie c in LstNiveau1.Items)
+                {
+                    if (c.Nom == nom)
+                    {
+                        LstNiveau1.SelectedItem = c;
+                        break;
+                    }
+                }
             }
         }
 
@@ -40,10 +50,10 @@ namespace IHM
                 _parentNiv1 = cat;
 
                 GrpNiveau2.IsEnabled = true;
-                GrpNiveau3.IsEnabled = false; // On désactive la 3ème par sécurité
+                GrpNiveau3.IsEnabled = false;
 
                 ChargerNiveau2();
-                LstNiveau3.ItemsSource = null; // On vide la liste 3
+                LstNiveau3.ItemsSource = null;
             }
         }
 
@@ -55,21 +65,29 @@ namespace IHM
 
         private void BtnAjoutNiv2_Click(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(TxtNiveau2.Text) && _parentNiv1 != null)
+            string nom = TxtNiveau2.Text;
+            if (!string.IsNullOrWhiteSpace(nom) && _parentNiv1 != null)
             {
-                _repo.AjouterCategorie(TxtNiveau2.Text, _parentNiv1.Id);
+                _repo.AjouterCategorie(nom, _parentNiv1.Id);
                 TxtNiveau2.Text = "";
                 ChargerNiveau2();
+
+                foreach (Categorie c in LstNiveau2.Items)
+                {
+                    if (c.Nom == nom)
+                    {
+                        LstNiveau2.SelectedItem = c;
+                        break;
+                    }
+                }
             }
         }
 
         private void LstNiveau2_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (LstNiveau2.SelectedItem is Categorie cat)  
+            if (LstNiveau2.SelectedItem is Categorie cat)
             {
                 _parentNiv2 = cat;
-
-                // On active la dernière colonne
                 GrpNiveau3.IsEnabled = true;
                 ChargerNiveau3();
             }
@@ -83,11 +101,21 @@ namespace IHM
 
         private void BtnAjoutNiv3_Click(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(TxtNiveau3.Text) && _parentNiv2 != null)
+            string nom = TxtNiveau3.Text;
+            if (!string.IsNullOrWhiteSpace(nom) && _parentNiv2 != null)
             {
-                _repo.AjouterCategorie(TxtNiveau3.Text, _parentNiv2.Id);
+                _repo.AjouterCategorie(nom, _parentNiv2.Id);
                 TxtNiveau3.Text = "";
                 ChargerNiveau3();
+
+                foreach (Categorie c in LstNiveau3.Items)
+                {
+                    if (c.Nom == nom)
+                    {
+                        LstNiveau3.SelectedItem = c;
+                        break;
+                    }
+                }
             }
         }
     }

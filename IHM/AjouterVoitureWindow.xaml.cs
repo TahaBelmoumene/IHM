@@ -55,13 +55,22 @@ namespace IHM
                 return;
             }
 
-            if (!string.IsNullOrWhiteSpace(TxtMarque.Text))
+            string nomMarque = TxtMarque.Text;
+            if (!string.IsNullOrWhiteSpace(nomMarque))
             {
-                _repo.AjouterMarque(TxtMarque.Text, _origineEnCours.Id);
+                _repo.AjouterMarque(nomMarque, _origineEnCours.Id);
 
                 TxtMarque.Text = "";
                 ChargerMarques();
-                MessageBox.Show($"Marque ajoutée dans la catégorie {_origineEnCours.Nom} !");
+
+                foreach (Marque m in CboMarques.Items)
+                {
+                    if (m.Nom == nomMarque)
+                    {
+                        CboMarques.SelectedItem = m;
+                        break;
+                    }
+                }
             }
         }
 
@@ -86,12 +95,21 @@ namespace IHM
 
         private void BtnAjoutModele_Click(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(TxtModele.Text) && _marqueEnCours != null)
+            string nomModele = TxtModele.Text;
+            if (!string.IsNullOrWhiteSpace(nomModele) && _marqueEnCours != null)
             {
-                _repo.AjouterModele(TxtModele.Text, _marqueEnCours.Id);
+                _repo.AjouterModele(nomModele, _marqueEnCours.Id);
                 TxtModele.Text = "";
                 ChargerModeles();
-                MessageBox.Show($"Modèle ajouté chez {_marqueEnCours.Nom} !");
+
+                foreach (Modele m in CboModeles.Items)
+                {
+                    if (m.Nom == nomModele)
+                    {
+                        CboModeles.SelectedItem = m;
+                        break;
+                    }
+                }
             }
         }
 
@@ -114,12 +132,21 @@ namespace IHM
 
         private void BtnAjoutGen_Click(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(TxtGenNom.Text) && int.TryParse(TxtGenAnnee.Text, out int annee))
+            string nomGen = TxtGenNom.Text;
+            if (!string.IsNullOrWhiteSpace(nomGen) && int.TryParse(TxtGenAnnee.Text, out int annee))
             {
-                _repo.AjouterGeneration(TxtGenNom.Text, annee, _modeleEnCours.Id);
+                _repo.AjouterGeneration(nomGen, annee, _modeleEnCours.Id);
                 TxtGenNom.Text = ""; TxtGenAnnee.Text = "";
                 ChargerGenerations();
-                MessageBox.Show("Version ajoutée !");
+
+                foreach (Generation g in CboGenerations.Items)
+                {
+                    if (g.Nom == nomGen)
+                    {
+                        CboGenerations.SelectedItem = g;
+                        break;
+                    }
+                }
             }
             else
             {

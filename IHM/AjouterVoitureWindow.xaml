@@ -66,6 +66,7 @@
                     <ComboBoxItem Content="Essence"/>
                     <ComboBoxItem Content="Hybride"/>
                     <ComboBoxItem Content="Électrique"/>
+                    <ComboBoxItem Content="Autre"/>
                 </ComboBox>
 
                 <Button Content="Terminer &amp; Ajouter Moteur" Height="30" Margin="0,10" Click="BtnAjoutMoteur_Click" Background="#D9534F" Foreground="White" FontWeight="Bold"/>

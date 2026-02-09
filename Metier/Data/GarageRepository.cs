@@ -46,10 +46,15 @@ namespace Metier.Data
             _context.SaveChanges();
         }
 
-        public void AjouterMarque(string nom)
+        public void AjouterMarque(string nom, int? parentId = null)
         {
-            _context.Marques.Add(new Marque { Nom = nom });
-            _context.SaveChanges();
+            var existe = _context.Marques.Any(m => m.Nom == nom && m.ParentId == parentId);
+
+            if (!existe)
+            {
+                _context.Marques.Add(new Marque { Nom = nom, ParentId = parentId });
+                _context.SaveChanges();
+            }
         }
 
         public void AjouterModele(string nom, int marqueId)
@@ -167,73 +172,20 @@ namespace Metier.Data
             return query.ToList<object>();
         }
 
-        public void AjouterMarque(string nom, int? parentId = null)
-        {
-            var existe = _context.Marques.Any(m => m.Nom == nom && m.ParentId == parentId);
-
-            if (!existe)
-            {
-                _context.Marques.Add(new Marque { Nom = nom, ParentId = parentId });
-                _context.SaveChanges();
-            }
-        }
-
-
-        public void InitialiserArchitectureMarques()
-        {
-            if (_context.Marques.Any()) return;
-
-            var francaise = new Marque { Nom = "Française" };
-            var allemande = new Marque { Nom = "Allemande" };
-            var italienne = new Marque { Nom = "Italienne" };
-            var japonaise = new Marque { Nom = "Japonaise" };
-            var americaine = new Marque { Nom = "Américaine" };
-            var autre = new Marque { Nom = "Autre" };
-
-            _context.Marques.AddRange(francaise, allemande, italienne, japonaise, americaine, autre);
-            _context.SaveChanges();
-
-            _context.Marques.Add(new Marque { Nom = "PSA", ParentId = francaise.Id });
-            _context.Marques.Add(new Marque { Nom = "Renault", ParentId = francaise.Id });
-
-            _context.Marques.Add(new Marque { Nom = "Volkswagen", ParentId = allemande.Id });
-            _context.Marques.Add(new Marque { Nom = "Audi", ParentId = allemande.Id });
-            _context.Marques.Add(new Marque { Nom = "Mercedes", ParentId = allemande.Id });
-            _context.Marques.Add(new Marque { Nom = "BMW", ParentId = allemande.Id });
-
-            _context.Marques.Add(new Marque { Nom = "Fiat", ParentId = italienne.Id });
-            _context.Marques.Add(new Marque { Nom = "Alfa Romeo", ParentId = italienne.Id });
-            _context.Marques.Add(new Marque { Nom = "Ferrari", ParentId = italienne.Id });
-
-            _context.Marques.Add(new Marque { Nom = "Toyota", ParentId = japonaise.Id });
-            _context.Marques.Add(new Marque { Nom = "Nissan", ParentId = japonaise.Id });
-            _context.Marques.Add(new Marque { Nom = "Honda", ParentId = japonaise.Id });
-
-            _context.Marques.Add(new Marque { Nom = "Ford", ParentId = americaine.Id });
-            _context.Marques.Add(new Marque { Nom = "Tesla", ParentId = americaine.Id });
-            _context.Marques.Add(new Marque { Nom = "Chevrolet", ParentId = americaine.Id });
-
-            _context.Marques.Add(new Marque { Nom = "Divers", ParentId = autre.Id });
-
-            _context.SaveChanges();
-        }
-        // Ajoutez ceci dans Metier/Data/GarageRepository.cs
-
         public void AjouterPackDemarrage(int motorisationId)
         {
             var listeStandard = new List<(string Categorie, string NomPiece, decimal Prix)>
-    {
-        ("Filtre à huile", "Filtre à huile Standard", 15),
-        ("Filtre à air", "Filtre à air Standard", 20),
-        ("Filtre habitacle", "Filtre habitacle Charbon", 25),
-        ("Plaquettes Avant", "Jeu de plaquettes Avant", 45),
-        ("Plaquettes Arrière", "Jeu de plaquettes Arrière", 35),
-        ("Disques Avant", "Jeu de disques Avant", 80),
-        ("Batterie", "Batterie 12V 60Ah", 90),
-        ("Essuie-glace", "Balais d'essuie-glace Avant", 25), 
-        ("Alternateur", "Alternateur Standard", 150),
-        ("Démarreur", "Démarreur Standard", 120)
-    };
+            {
+                ("Filtre à huile", "Filtre à huile Standard", 15),
+                ("Filtre à air", "Filtre à air Standard", 20),
+                ("Filtre habitacle", "Filtre habitacle Charbon", 25),
+                ("Plaquettes Avant", "Jeu de plaquettes Avant", 45),
+                ("Plaquettes Arrière", "Jeu de plaquettes Arrière", 35),
+                ("Disques Avant", "Jeu de disques Avant", 80),
+                ("Batterie", "Batterie 12V 60Ah", 90),
+                ("Alternateur", "Alternateur Standard", 150),
+                ("Démarreur", "Démarreur Standard", 120)
+            };
 
             foreach (var item in listeStandard)
             {
@@ -251,6 +203,59 @@ namespace Metier.Data
                 }
             }
         }
+
+        public void InitialiserArchitectureMarques()
+        {
+            if (!_context.Marques.Any())
+            {
+                var francaise = new Marque { Nom = "Française" };
+                var allemande = new Marque { Nom = "Allemande" };
+                var italienne = new Marque { Nom = "Italienne" };
+                var japonaise = new Marque { Nom = "Japonaise" };
+                var americaine = new Marque { Nom = "Américaine" };
+                var autre = new Marque { Nom = "Autre" };
+
+                _context.Marques.AddRange(francaise, allemande, italienne, japonaise, americaine, autre);
+                _context.SaveChanges();
+
+                _context.Marques.Add(new Marque { Nom = "PSA", ParentId = francaise.Id });
+                _context.Marques.Add(new Marque { Nom = "Renault", ParentId = francaise.Id });
+
+                _context.Marques.Add(new Marque { Nom = "Volkswagen", ParentId = allemande.Id });
+                _context.Marques.Add(new Marque { Nom = "Audi", ParentId = allemande.Id });
+                _context.Marques.Add(new Marque { Nom = "Mercedes", ParentId = allemande.Id });
+                _context.Marques.Add(new Marque { Nom = "BMW", ParentId = allemande.Id });
+
+                _context.Marques.Add(new Marque { Nom = "Fiat", ParentId = italienne.Id });
+                _context.Marques.Add(new Marque { Nom = "Alfa Romeo", ParentId = italienne.Id });
+                _context.Marques.Add(new Marque { Nom = "Ferrari", ParentId = italienne.Id });
+
+                _context.Marques.Add(new Marque { Nom = "Toyota", ParentId = japonaise.Id });
+                _context.Marques.Add(new Marque { Nom = "Nissan", ParentId = japonaise.Id });
+                _context.Marques.Add(new Marque { Nom = "Honda", ParentId = japonaise.Id });
+
+                _context.Marques.Add(new Marque { Nom = "Ford", ParentId = americaine.Id });
+                _context.Marques.Add(new Marque { Nom = "Tesla", ParentId = americaine.Id });
+                _context.Marques.Add(new Marque { Nom = "Chevrolet", ParentId = americaine.Id });
+
+                _context.Marques.Add(new Marque { Nom = "Divers", ParentId = autre.Id });
+
+                _context.SaveChanges();
+            }
+            else
+            {
+                // Patch pour ajouter "Autre" si manquant dans une base existante
+                if (!_context.Marques.Any(m => m.Nom == "Autre" && m.ParentId == null))
+                {
+                    var autre = new Marque { Nom = "Autre" };
+                    _context.Marques.Add(autre);
+                    _context.SaveChanges();
+                    _context.Marques.Add(new Marque { Nom = "Divers", ParentId = autre.Id });
+                    _context.SaveChanges();
+                }
+            }
+        }
+
         public void InitialiserArchitectureStock()
         {
             if (_context.Categories.Any()) return;
