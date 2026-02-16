@@ -132,6 +132,15 @@ namespace IHM
             decimal total = _panier.Sum(l => l.TotalLigne);
             TxtTotal.Text = $"{total:N2} €";
         }
+        public class LignePanier
+        {
+            // Le "required" force à remplir la variable lors de la création
+            public required Piece PieceOriginale { get; set; }
+            public string NomPiece { get; set; } = string.Empty;
+            public int Quantite { get; set; }
+            public decimal PrixUnitaire { get; set; }
+            public decimal TotalLigne => Quantite * PrixUnitaire;
+        }
 
         // Le handler de validation est défini plus haut (gère aussi l'export PDF). Ne pas dupliquer.
     }
