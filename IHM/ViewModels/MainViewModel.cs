@@ -71,7 +71,7 @@ namespace IHM.ViewModels
                 foreach (var m in _repo.GetMoteurs(GenerationSelected.Id)) ListeMoteurs.Add(m);
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
