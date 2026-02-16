@@ -133,28 +133,6 @@ namespace IHM
             TxtTotal.Text = $"{total:N2} €";
         }
 
-        private void BtnValiderFacture_Click(object sender, RoutedEventArgs e)
-        {
-            if (CboClients.SelectedItem is Client client)
-            {
-                if (_panier.Count == 0)
-                {
-                    MessageBox.Show("Le panier est vide !");
-                    return;
-                }
-
-                // Conversion du panier pour le Repository
-                var articles = _panier.Select(l => (l.PieceOriginale, l.Quantite)).ToList();
-
-                _repo.CreerFacture(client, articles);
-
-                MessageBox.Show("Facture enregistrée avec succès !");
-                this.Close();
-            }
-            else
-            {
-                MessageBox.Show("Veuillez sélectionner un client.");
-            }
-        }
+        // Le handler de validation est défini plus haut (gère aussi l'export PDF). Ne pas dupliquer.
     }
 }

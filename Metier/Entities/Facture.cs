@@ -14,10 +14,10 @@ namespace Metier.Entities
         public decimal Total { get; set; }
 
         public int ClientId { get; set; }
-        [ForeignKey("ClientId")]
-        public Client Client { get; set; }
 
-        // Liste des articles achetés
+        [ForeignKey("ClientId")]
+        public Client? Client { get; set; } // Nullable Client?
+
         public List<LigneFacture> Lignes { get; set; } = new List<LigneFacture>();
     }
 }

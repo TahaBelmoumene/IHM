@@ -11,13 +11,15 @@ namespace Metier.Entities
 
         public int Quantite { get; set; }
         public decimal PrixUnitaire { get; set; }
-        public string NomPiece { get; set; } // On garde le nom en mémoire (historique)
+        public string NomPiece { get; set; } = string.Empty; // Initialisation vide
 
         public int FactureId { get; set; }
+
         [ForeignKey("FactureId")]
-        public Facture Facture { get; set; }
+        public Facture? Facture { get; set; } // Nullable
 
         public int? PieceId { get; set; }
+
         [ForeignKey("PieceId")]
         public Piece? Piece { get; set; }
     }

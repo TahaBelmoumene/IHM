@@ -1,10 +1,10 @@
-﻿using System;
-using System.IO;
-using System.Diagnostics;
-using Metier.Entities;
+﻿using Metier.Entities;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using System;
+using System.IO;
+using System.Reflection.Metadata;
 
 namespace IHM.Services
 {
@@ -31,7 +31,7 @@ namespace IHM.Services
                                 column.Item().Text($"Date : {facture.DateEmission:dd/MM/yyyy}");
                             });
 
-                            row.ConstantItem(100).Column(column =>
+                            row.ConstantItem(150).Column(column =>
                             {
                                 column.Item().Text("Garage Farsi").SemiBold();
                                 column.Item().Text("123 Rue de la Mécanique");
@@ -39,32 +39,35 @@ namespace IHM.Services
                             });
                         });
 
-                    // 2. Contenu (Client + Tableau)
+                    // 2. Contenu
                     page.Content().PaddingVertical(1, Unit.Centimetre).Column(column =>
                     {
                         // Info Client
-                        column.Item().Border(1).BorderColor(Colors.Grey).Padding(10).Column(c =>
+                        // Remplacement de Colors.Grey.Light par Colors.Grey.Lighten2 ou Medium
+                        column.Item().Border(1).BorderColor(Colors.Grey.Medium).Padding(10).Column(c =>
                         {
-                            c.Item().Text("CLIENT").SemiBold().FontSize(10).FontColor(Colors.Grey);
-                            c.Item().Text($"{facture.Client.Nom} {facture.Client.Prenom}").FontSize(14).SemiBold();
-                            c.Item().Text($"Tél : {facture.Client.Telephone}");
+                            c.Item().Text("CLIENT").SemiBold().FontSize(10).FontColor(Colors.Grey.Medium);
+                            if (facture.Client != null) // Sécurité null
+                            {
+                                c.Item().Text($"{facture.Client.Nom} {facture.Client.Prenom}").FontSize(14).SemiBold();
+                                c.Item().Text($"Tél : {facture.Client.Telephone}");
+                            }
                         });
 
-                        column.Item().Height(1, Unit.Centimetre); // Espace
+                        column.Item().Height(1, Unit.Centimetre);
 
-                        // Tableau des pièces
+                        // Tableau
                         column.Item().Table(table =>
                         {
-                            // Définition des colonnes
+                            // CORRECTION : RelativeColumn et ConstantColumn
                             table.ColumnsDefinition(columns =>
                             {
-                                columns.ConstantColumn(1, Unit.Auto);     // Nom Pièce (auto expand)
-                                columns.ConstantColumn(50, Unit.Point);   // Qté
-                                columns.ConstantColumn(80, Unit.Point);   // Prix U
-                                columns.ConstantColumn(80, Unit.Point);   // Total
+                                columns.RelativeColumn();     // Nom
+                                columns.ConstantColumn(50);   // Qté
+                                columns.ConstantColumn(80);   // Prix
+                                columns.ConstantColumn(80);   // Total
                             });
 
-                            // En-tête du tableau
                             table.Header(header =>
                             {
                                 header.Cell().Element(CellStyle).Text("Désignation");
@@ -78,7 +81,6 @@ namespace IHM.Services
                                 }
                             });
 
-                            // Lignes du tableau
                             foreach (var ligne in facture.Lignes)
                             {
                                 table.Cell().Element(CellStyle).Text(ligne.NomPiece);
@@ -88,18 +90,17 @@ namespace IHM.Services
 
                                 static IContainer CellStyle(IContainer container)
                                 {
-                                    return container.BorderBottom(1).BorderColor(Colors.Grey.Light).PaddingVertical(5);
+                                    return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2).PaddingVertical(5);
                                 }
                             }
                         });
 
                         column.Item().Height(1, Unit.Centimetre);
 
-                        // Total
                         column.Item().AlignRight().Text($"TOTAL À PAYER : {facture.Total:N2} €").FontSize(18).SemiBold().FontColor(Colors.Green.Medium);
                     });
 
-                    // 3. Pied de page (Footer)
+                    // 3. Footer
                     page.Footer()
                         .AlignCenter()
                         .Text(x =>

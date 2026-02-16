@@ -371,13 +371,14 @@ namespace Metier.Data
         public List<Piece> GetAllPieces() => _context.Pieces.OrderBy(p => p.Nom).ToList();
 
         // Créer une facture complète
-        public void CreerFacture(Client client, List<(Piece piece, int qte)> articles)
+        public Facture CreerFacture(Client client, List<(Piece piece, int qte)> articles)
         {
             var facture = new Facture
             {
                 ClientId = client.Id,
                 DateEmission = System.DateTime.Now,
-                Lignes = new List<LigneFacture>()
+                Lignes = new List<LigneFacture>(),
+                Client = client
             };
 
             decimal totalGeneral = 0;
@@ -393,13 +394,15 @@ namespace Metier.Data
                     PieceId = piece.Id,
                     NomPiece = piece.Nom,
                     PrixUnitaire = piece.Prix,
-                    Quantite = qte
+                    Quantite = qte, 
+                    Facture = facture,
+                    Piece = piece
                 };
 
                 facture.Lignes.Add(ligne);
                 totalGeneral += (piece.Prix * qte);
 
-                // Décrémenter le stock
+                // Décrémenter le stock     
                 piece.Stock -= qte;
             }
 
@@ -407,7 +410,8 @@ namespace Metier.Data
 
             _context.Factures.Add(facture);
             _context.SaveChanges();
-            return facture; // AJOUTEZ CETTE LIGNE
+
+            return facture;
         }
         #endregion
     }
