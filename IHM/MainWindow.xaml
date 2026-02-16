@@ -10,34 +10,36 @@
 
             <TextBlock Text="Origine du véhicule :"/>
             <ComboBox ItemsSource="{Binding ListeOrigines}" 
-              SelectedItem="{Binding OrigineSelected}"
-              DisplayMemberPath="Nom" Margin="0,5,0,15"/>
+                      SelectedItem="{Binding OrigineSelected}"
+                      DisplayMemberPath="Nom" Margin="0,5,0,15"/>
 
             <TextBlock Text="Marque / Groupe :"/>
             <ComboBox ItemsSource="{Binding ListeMarques}" 
-              SelectedItem="{Binding MarqueSelected}"
-              DisplayMemberPath="Nom" Margin="0,5,0,15"
-              IsEnabled="{Binding OrigineSelected, Converter={StaticResource NullToBoolConverter}}"/>
+                      SelectedItem="{Binding MarqueSelected}"
+                      DisplayMemberPath="Nom" Margin="0,5,0,15"
+                      IsEnabled="{Binding EstMarqueActive}"/>
 
             <TextBlock Text="Modèle :"/>
             <ComboBox ItemsSource="{Binding ListeModeles}" 
-              SelectedItem="{Binding ModeleSelected}"
-              DisplayMemberPath="Nom" Margin="0,5,0,15"
-              IsEnabled="{Binding MarqueSelected, Converter={StaticResource NullToBoolConverter}}"/>
+                      SelectedItem="{Binding ModeleSelected}"
+                      DisplayMemberPath="Nom" Margin="0,5,0,15"
+                      IsEnabled="{Binding EstModeleActif}"/>
 
             <TextBlock Text="Année / Version :"/>
             <ComboBox ItemsSource="{Binding ListeGenerations}" 
-              SelectedItem="{Binding GenerationSelected}"
-              DisplayMemberPath="Nom" Margin="0,5,0,15"/>
+                      SelectedItem="{Binding GenerationSelected}"
+                      DisplayMemberPath="Nom" Margin="0,5,0,15"
+                      IsEnabled="{Binding EstGenerationActive}"/>
 
             <TextBlock Text="Motorisation :"/>
             <ComboBox ItemsSource="{Binding ListeMoteurs}" 
-              SelectedItem="{Binding MoteurSelected}"
-              DisplayMemberPath="Nom" Margin="0,5,0,30"/>
+                      SelectedItem="{Binding MoteurSelected}"
+                      DisplayMemberPath="Nom" Margin="0,5,0,30"
+                      IsEnabled="{Binding EstMoteurActif}"/>
 
             <Button Content="VOIR LES PIÈCES DISPONIBLES" 
-            Height="40" Background="#007ACC" Foreground="White"
-            Click="BtnVoirPieces_Click"/>
+                    Height="40" Background="#007ACC" Foreground="White"
+                    Click="BtnVoirPieces_Click"/>
         </StackPanel>
     </Grid>
 </Window>

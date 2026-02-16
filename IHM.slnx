@@ -1,7 +1,4 @@
 <Solution>
-  <Folder Name="/Converters/">
-    <File Path="NullToBoolConverter.cs" />
-  </Folder>
   <Project Path="IHM/IHM.csproj" />
   <Project Path="Metier/Metier.csproj" />
 </Solution>
