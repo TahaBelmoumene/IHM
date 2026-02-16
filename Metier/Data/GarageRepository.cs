@@ -364,5 +364,51 @@ namespace Metier.Data
             _context.SaveChanges();
         }
         #endregion
+        // Dans Metier/Data/GarageRepository.cs
+
+        #region Facturation
+        // Récupérer toutes les pièces pour la liste déroulante
+        public List<Piece> GetAllPieces() => _context.Pieces.OrderBy(p => p.Nom).ToList();
+
+        // Créer une facture complète
+        public void CreerFacture(Client client, List<(Piece piece, int qte)> articles)
+        {
+            var facture = new Facture
+            {
+                ClientId = client.Id,
+                DateEmission = System.DateTime.Now,
+                Lignes = new List<LigneFacture>()
+            };
+
+            decimal totalGeneral = 0;
+
+            foreach (var item in articles)
+            {
+                var piece = item.piece;
+                var qte = item.qte;
+
+                // Création de la ligne
+                var ligne = new LigneFacture
+                {
+                    PieceId = piece.Id,
+                    NomPiece = piece.Nom,
+                    PrixUnitaire = piece.Prix,
+                    Quantite = qte
+                };
+
+                facture.Lignes.Add(ligne);
+                totalGeneral += (piece.Prix * qte);
+
+                // Décrémenter le stock
+                piece.Stock -= qte;
+            }
+
+            facture.Total = totalGeneral;
+
+            _context.Factures.Add(facture);
+            _context.SaveChanges();
+            return facture; // AJOUTEZ CETTE LIGNE
+        }
+        #endregion
     }
 }

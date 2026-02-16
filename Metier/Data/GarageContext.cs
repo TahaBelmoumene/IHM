@@ -15,8 +15,9 @@ namespace Metier.Entities
     public DbSet<Categorie> Categories { get; set; }
     public DbSet<Piece> Pieces { get; set; }
     public DbSet<Compatibilite> Compatibilites { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    public DbSet<Facture> Factures { get; set; }
+    public DbSet<LigneFacture> LignesFacture { get; set; }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
         optionsBuilder.UseSqlite("Data Source=garage.db");
         }
