@@ -134,14 +134,16 @@ namespace IHM
         }
         public class LignePanier
         {
-            // Le "required" force à remplir la variable lors de la création
-            public required Piece PieceOriginale { get; set; }
-            public string NomPiece { get; set; } = string.Empty;
+            // On ajoute "= null!;" pour dire "T'inquiète pas, je vais le remplir plus tard"
+            public Piece PieceOriginale { get; set; } = null!;
+
+            // On initialise avec une chaine vide
+            public string NomPiece { get; set; } = "";
+
             public int Quantite { get; set; }
             public decimal PrixUnitaire { get; set; }
             public decimal TotalLigne => Quantite * PrixUnitaire;
         }
-
         // Le handler de validation est défini plus haut (gère aussi l'export PDF). Ne pas dupliquer.
     }
 }

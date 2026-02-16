@@ -3,9 +3,8 @@ using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using System;
-using System.IO;
 using System.Reflection.Metadata;
-// ASTUCE : On crée un alias pour éviter le conflit avec System.Windows.Media.Colors
+// ASTUCE : On renomme les couleurs de QuestPDF en "QColors" pour éviter le conflit avec WPF
 using QColors = QuestPDF.Helpers.Colors;
 
 namespace IHM.Services
@@ -14,7 +13,6 @@ namespace IHM.Services
     {
         public static void GenererPdf(Facture facture, string cheminFichier)
         {
-            // Vérification de sécurité
             if (facture.Client == null) return;
 
             Document.Create(container =>
@@ -23,7 +21,7 @@ namespace IHM.Services
                 {
                     page.Size(PageSizes.A4);
                     page.Margin(2, Unit.Centimetre);
-                    page.PageColor(QColors.White); // Utilisation de l'alias QColors
+                    page.PageColor(QColors.White); // Utilisation de QColors
                     page.DefaultTextStyle(x => x.FontSize(12));
 
                     // 1. En-tête
@@ -47,7 +45,7 @@ namespace IHM.Services
                     // 2. Contenu
                     page.Content().PaddingVertical(1, Unit.Centimetre).Column(column =>
                     {
-                        // Cadre Client
+                        // Info Client
                         column.Item().Border(1).BorderColor(QColors.Grey.Medium).Padding(10).Column(c =>
                         {
                             c.Item().Text("CLIENT").SemiBold().FontSize(10).FontColor(QColors.Grey.Medium);
@@ -97,10 +95,11 @@ namespace IHM.Services
 
                         column.Item().Height(1, Unit.Centimetre);
 
+                        // Total
                         column.Item().AlignRight().Text($"TOTAL À PAYER : {facture.Total:N2} €").FontSize(18).SemiBold().FontColor(QColors.Green.Medium);
                     });
 
-                    // 3. Footer
+                    // 3. Pied de page
                     page.Footer()
                         .AlignCenter()
                         .Text(x =>
