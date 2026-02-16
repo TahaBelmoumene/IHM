@@ -13,7 +13,7 @@ namespace IHM
         {
             MainWindow fenetreRecherche = new MainWindow();
             fenetreRecherche.Show();
-            this.Close();            
+            this.Close();
         }
 
         private void BtnAjouterPiece_Click(object sender, RoutedEventArgs e)
@@ -24,7 +24,9 @@ namespace IHM
 
         private void BtnModifierPiece_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Écran de modification à créer !");
+            // Ouvre le choix de catégorie en mode "Inventaire global" (paramètre null)
+            ChoixCategorieWindow fenetre = new ChoixCategorieWindow(null);
+            fenetre.Show();
         }
 
         private void BtnAjouterVoiture_Click(object sender, RoutedEventArgs e)
@@ -32,6 +34,7 @@ namespace IHM
             AjoutVoitureWindow fenetreAjout = new AjoutVoitureWindow();
             fenetreAjout.ShowDialog();
         }
+
         private void BtnGererRayons_Click(object sender, RoutedEventArgs e)
         {
             GestionRayonsWindow fenetre = new GestionRayonsWindow();
