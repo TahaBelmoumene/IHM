@@ -1,18 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Metier.Entities
 {
+    [Table("VehiculesClients")]
     public class VehiculeClient
     {
+        [Key]
         public int Id { get; set; }
-        public string Plaque { get; set; }
+        public string Plaque { get; set; } = string.Empty;
 
         public int MotorisationId { get; set; }
-        public Motorisation Motorisation { get; set; }
+
+        [ForeignKey("MotorisationId")]
+        public Motorisation? Motorisation { get; set; }
 
         public int? ClientId { get; set; }
+
+        [ForeignKey("ClientId")]
         public Client? Client { get; set; }
     }
 }

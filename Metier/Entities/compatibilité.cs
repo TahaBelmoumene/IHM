@@ -11,10 +11,10 @@ namespace Metier.Entities
 
         public int PieceId { get; set; }
         [ForeignKey("PieceId")]
-        public Piece Piece { get; set; }
+        public Piece? Piece { get; set; }
 
         public int MotorisationId { get; set; }
         [ForeignKey("MotorisationId")]
-        public Motorisation Motorisation { get; set; }
+        public Motorisation? Motorisation { get; set; }
     }
 }

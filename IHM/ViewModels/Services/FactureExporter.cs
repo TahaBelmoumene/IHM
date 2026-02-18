@@ -1,10 +1,11 @@
 ﻿using System;
-using System.IO;
-using System.Diagnostics;
 using Metier.Entities;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+
+// Alias pour éviter les conflits de noms de couleurs
+using QColors = QuestPDF.Helpers.Colors;
 
 namespace IHM.Services
 {
@@ -12,26 +13,29 @@ namespace IHM.Services
     {
         public static void GenererPdf(Facture facture, string cheminFichier)
         {
-            Document.Create(container =>
+            if (facture.Client == null) return;
+
+            // CORRECTION : On utilise le chemin complet "QuestPDF.Fluent.Document"
+            QuestPDF.Fluent.Document.Create(container =>
             {
                 container.Page(page =>
                 {
                     page.Size(PageSizes.A4);
                     page.Margin(2, Unit.Centimetre);
-                    page.PageColor(Colors.White);
+                    page.PageColor(QColors.White);
                     page.DefaultTextStyle(x => x.FontSize(12));
 
-                    // 1. En-tête (Header)
+                    // 1. En-tête
                     page.Header()
                         .Row(row =>
                         {
                             row.RelativeItem().Column(column =>
                             {
-                                column.Item().Text($"Facture N° {facture.Id}").SemiBold().FontSize(20).FontColor(Colors.Blue.Medium);
+                                column.Item().Text($"Facture N° {facture.Id}").SemiBold().FontSize(20).FontColor(QColors.Blue.Medium);
                                 column.Item().Text($"Date : {facture.DateEmission:dd/MM/yyyy}");
                             });
 
-                            row.ConstantItem(100).Column(column =>
+                            row.ConstantItem(150).Column(column =>
                             {
                                 column.Item().Text("Garage Farsi").SemiBold();
                                 column.Item().Text("123 Rue de la Mécanique");
@@ -39,32 +43,30 @@ namespace IHM.Services
                             });
                         });
 
-                    // 2. Contenu (Client + Tableau)
+                    // 2. Contenu
                     page.Content().PaddingVertical(1, Unit.Centimetre).Column(column =>
                     {
                         // Info Client
-                        column.Item().Border(1).BorderColor(Colors.Grey).Padding(10).Column(c =>
+                        column.Item().Border(1).BorderColor(QColors.Grey.Medium).Padding(10).Column(c =>
                         {
-                            c.Item().Text("CLIENT").SemiBold().FontSize(10).FontColor(Colors.Grey);
+                            c.Item().Text("CLIENT").SemiBold().FontSize(10).FontColor(QColors.Grey.Medium);
                             c.Item().Text($"{facture.Client.Nom} {facture.Client.Prenom}").FontSize(14).SemiBold();
                             c.Item().Text($"Tél : {facture.Client.Telephone}");
                         });
 
-                        column.Item().Height(1, Unit.Centimetre); // Espace
+                        column.Item().Height(1, Unit.Centimetre);
 
-                        // Tableau des pièces
+                        // Tableau
                         column.Item().Table(table =>
                         {
-                            // Définition des colonnes
                             table.ColumnsDefinition(columns =>
                             {
-                                columns.ConstantColumn(1, Unit.Auto);     // Nom Pièce (auto expand)
-                                columns.ConstantColumn(50, Unit.Point);   // Qté
-                                columns.ConstantColumn(80, Unit.Point);   // Prix U
-                                columns.ConstantColumn(80, Unit.Point);   // Total
+                                columns.RelativeColumn();
+                                columns.ConstantColumn(50);
+                                columns.ConstantColumn(80);
+                                columns.ConstantColumn(80);
                             });
 
-                            // En-tête du tableau
                             table.Header(header =>
                             {
                                 header.Cell().Element(CellStyle).Text("Désignation");
@@ -74,21 +76,22 @@ namespace IHM.Services
 
                                 static IContainer CellStyle(IContainer container)
                                 {
-                                    return container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).BorderBottom(1).BorderColor(Colors.Black);
+                                    return container.DefaultTextStyle(x => x.SemiBold()).PaddingVertical(5).BorderBottom(1).BorderColor(QColors.Black);
                                 }
                             });
 
-                            // Lignes du tableau
                             foreach (var ligne in facture.Lignes)
                             {
-                                table.Cell().Element(CellStyle).Text(ligne.NomPiece);
+                                string nom = ligne.NomPiece ?? "Pièce";
+
+                                table.Cell().Element(CellStyle).Text(nom);
                                 table.Cell().Element(CellStyle).AlignRight().Text(ligne.Quantite.ToString());
                                 table.Cell().Element(CellStyle).AlignRight().Text($"{ligne.PrixUnitaire} €");
                                 table.Cell().Element(CellStyle).AlignRight().Text($"{(ligne.Quantite * ligne.PrixUnitaire)} €");
 
                                 static IContainer CellStyle(IContainer container)
                                 {
-                                    return container.BorderBottom(1).BorderColor(Colors.Grey.Light).PaddingVertical(5);
+                                    return container.BorderBottom(1).BorderColor(QColors.Grey.Lighten2).PaddingVertical(5);
                                 }
                             }
                         });
@@ -96,10 +99,10 @@ namespace IHM.Services
                         column.Item().Height(1, Unit.Centimetre);
 
                         // Total
-                        column.Item().AlignRight().Text($"TOTAL À PAYER : {facture.Total:N2} €").FontSize(18).SemiBold().FontColor(Colors.Green.Medium);
+                        column.Item().AlignRight().Text($"TOTAL À PAYER : {facture.Total:N2} €").FontSize(18).SemiBold().FontColor(QColors.Green.Medium);
                     });
 
-                    // 3. Pied de page (Footer)
+                    // 3. Pied de page
                     page.Footer()
                         .AlignCenter()
                         .Text(x =>

@@ -24,7 +24,6 @@ namespace IHM
 
         private void BtnModifierPiece_Click(object sender, RoutedEventArgs e)
         {
-            // Ouvre le choix de catégorie en mode "Inventaire global" (paramètre null)
             ChoixCategorieWindow fenetre = new ChoixCategorieWindow(null);
             fenetre.Show();
         }
@@ -34,11 +33,22 @@ namespace IHM
             AjoutVoitureWindow fenetreAjout = new AjoutVoitureWindow();
             fenetreAjout.ShowDialog();
         }
-
+            
         private void BtnGererRayons_Click(object sender, RoutedEventArgs e)
         {
             GestionRayonsWindow fenetre = new GestionRayonsWindow();
             fenetre.ShowDialog();
+        }
+        private void BtnFacture_Click(object sender, RoutedEventArgs e)
+        {
+            // On ouvre la fenêtre de création de facture
+            CreationFactureWindow fenetre = new CreationFactureWindow();
+            fenetre.ShowDialog(); // ShowDialog empêche de cliquer ailleurs tant que la facture n'est pas finie
+        }
+        private void BtnNouveauClient_Click(object sender, RoutedEventArgs e)
+        {
+            AjoutClientWindow fenetre = new AjoutClientWindow();
+            fenetre.ShowDialog(); // ShowDialog empêche de cliquer ailleurs tant que c'est ouvert
         }
     }
 }

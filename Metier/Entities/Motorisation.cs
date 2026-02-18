@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace Metier.Entities
 {
@@ -11,8 +8,9 @@ namespace Metier.Entities
     {
         [Key]
         public int Id { get; set; }
-        public string? Nom { get; set; }      
-        public string? Carburant { get; set; } 
+        public string Nom { get; set; } = string.Empty;
+        public string Carburant { get; set; } = string.Empty;
+
         public int GenerationId { get; set; }
 
         [ForeignKey("GenerationId")]

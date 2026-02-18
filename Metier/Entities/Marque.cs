@@ -8,9 +8,10 @@ namespace Metier.Entities
     {
         [Key]
         public int Id { get; set; }
-        public string Nom { get; set; }
+        public string Nom { get; set; } = string.Empty;
 
         public int? ParentId { get; set; }
+
         [ForeignKey("ParentId")]
         public Marque? Parent { get; set; }
     }

@@ -82,6 +82,22 @@
                 </StackPanel>
             </Button>
 
+            <Button Style="{StaticResource MenuCardStyle}" Click="BtnFacture_Click" Margin="10">
+                <StackPanel>
+                    <TextBlock Text="💶" FontSize="40" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                    <TextBlock Text="Caisse / Facture" FontWeight="Bold" FontSize="18" Foreground="#2D3748" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Créer une facture client" FontSize="12" Foreground="#A0AEC0" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+
+            <Button Style="{StaticResource MenuCardStyle}" Click="BtnNouveauClient_Click" Margin="10">
+                <StackPanel>
+                    <TextBlock Text="👤" FontSize="40" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                    <TextBlock Text="Clients" FontWeight="Bold" FontSize="18" Foreground="#2D3748" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Ajouter un client" FontSize="12" Foreground="#A0AEC0" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+
         </UniformGrid>
     </Grid>
 </Window>
