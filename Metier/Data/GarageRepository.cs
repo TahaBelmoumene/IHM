@@ -7,6 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Metier.Data
 {
+
+
+    /// sttetshhs
     /// <summary>
     /// donnes les méthodes permettant de faire l'ajout modification et toutes ce qui est compatibilités et gestion. 
     /// </summary>
