@@ -38,8 +38,7 @@ namespace IHM.Services
                             row.ConstantItem(150).Column(column =>
                             {
                                 column.Item().Text("Garage Farsi").SemiBold();
-                                column.Item().Text("123 Rue de la Mécanique");
-                                column.Item().Text("75000 Paris");
+                                column.Item().Text("21000 dIJON");
                             });
                         });
 

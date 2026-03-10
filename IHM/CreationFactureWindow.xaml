@@ -20,7 +20,18 @@
             <TextBlock Text="2. Ajouter un article" FontSize="18" FontWeight="Bold" Foreground="#007ACC" Margin="0,0,0,10"/>
 
             <TextBlock Text="Pièce :" FontWeight="SemiBold"/>
-            <ComboBox x:Name="CboPieces" DisplayMemberPath="Nom" Height="30" Margin="0,5,0,10"/>
+            <StackPanel Orientation="Horizontal" Margin="0,5,0,10">
+                <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="3" Height="30" Width="190" Margin="0,0,10,0" Padding="5" Background="White">
+                    <TextBlock x:Name="TxtPieceSelectionnee" Text="Aucune pièce sélectionnée" VerticalAlignment="Center" FontStyle="Italic" TextTrimming="CharacterEllipsis"/>
+                </Border>
+                <Button Content="🔍 Rechercher" Click="BtnRechercherPiece_Click" Width="100" Background="#6C757D" Foreground="White" Cursor="Hand"/>
+            </StackPanel>
+
+            <TextBlock Text="État / TVA :" FontWeight="SemiBold" Margin="0,5,0,0"/>
+            <StackPanel Orientation="Horizontal" Margin="0,5,0,15">
+                <RadioButton x:Name="RadioNeuf" Content="Neuf (TVA 20%)" GroupName="EtatGroup" IsChecked="True" Margin="0,0,15,0"/>
+                <RadioButton x:Name="RadioOccasion" Content="Occasion (Marge)" GroupName="EtatGroup"/>
+            </StackPanel>
 
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -32,7 +43,7 @@
                     <TextBlock Text="Quantité :" FontWeight="SemiBold"/>
                     <TextBox x:Name="TxtQte" Text="1" Height="30" Margin="0,5,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
                 </StackPanel>
-                <Button Grid.Column="2" Content="AJOUTER" Click="BtnAjouterLigne_Click" Background="#007ACC" Foreground="White" FontWeight="Bold" Height="30" VerticalAlignment="Bottom"/>
+                <Button Grid.Column="2" Content="AJOUTER" Click="BtnAjouterLigne_Click" Background="#007ACC" Foreground="White" FontWeight="Bold" Height="30" VerticalAlignment="Bottom" Cursor="Hand"/>
             </Grid>
 
         </StackPanel>
@@ -50,7 +61,7 @@
 
                 <DataGrid x:Name="GridPanier" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Pièce" Binding="{Binding NomPiece}" Width="*"/>
+                        <DataGridTextColumn Header="Pièce" Binding="{Binding DescriptionComplete}" Width="*"/>
                         <DataGridTextColumn Header="Qté" Binding="{Binding Quantite}" Width="50"/>
                         <DataGridTextColumn Header="Prix U." Binding="{Binding PrixUnitaire}" Width="80"/>
                         <DataGridTextColumn Header="Total Ligne" Binding="{Binding TotalLigne}" Width="80"/>
@@ -58,7 +69,7 @@
                         <DataGridTemplateColumn Width="70">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Content="X" Click="BtnSupprimerLigne_Click" Background="#D9534F" Foreground="White" FontWeight="Bold"/>
+                                    <Button Content="X" Click="BtnSupprimerLigne_Click" Background="#D9534F" Foreground="White" FontWeight="Bold" Cursor="Hand"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -70,7 +81,7 @@
                     <TextBlock x:Name="TxtTotal" Text="0,00 €" FontSize="24" FontWeight="Bold" Foreground="#28a745"/>
                 </StackPanel>
 
-                <Button Grid.Row="3" Content="VALIDER ET ENREGISTRER LA FACTURE" Height="50" Background="#28a745" Foreground="White" FontSize="16" FontWeight="Bold" Click="BtnValiderFacture_Click"/>
+                <Button Grid.Row="3" Content="VALIDER ET ENREGISTRER LA FACTURE" Height="50" Background="#28a745" Foreground="White" FontSize="16" FontWeight="Bold" Click="BtnValiderFacture_Click" Cursor="Hand"/>
             </Grid>
         </Border>
     </Grid>

@@ -14,10 +14,10 @@
                     <DataGridTextColumn Header="Stock" Binding="{Binding Stock}" Width="60"/>
                     <DataGridTextColumn Header="État" Binding="{Binding Etat}" Width="80"/>
 
-                    <DataGridTemplateColumn Width="100">
+                    <DataGridTemplateColumn Width="140">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Content="Modifier" Click="BtnModifier_Click" Background="#FFA500" Foreground="White" FontWeight="Bold" Margin="2"/>
+                                <Button Content="Choisir / Modifier" Click="BtnAction_Click" Background="#007ACC" Foreground="White" FontWeight="Bold" Margin="2" Cursor="Hand"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

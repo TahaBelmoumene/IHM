@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System; // Important pour Action<>
+using System.Windows;
 using System.Windows.Input;
 using Metier.Data;
 using Metier.Entities;
@@ -8,33 +9,30 @@ namespace IHM
     public partial class ChoixCategorieWindow : Window
     {
         private GarageRepository _repo;
-        private Motorisation? _voitureChoisie; // Le ? rend la variable nullable
+        private Motorisation? _voitureChoisie;
+        private Action<Piece>? _callbackSelection; // Le passe-plat
 
-        // Le paramètre a une valeur par défaut "null"
-        public ChoixCategorieWindow(Motorisation? voiture = null)
+        // Ajout du paramètre callback
+        public ChoixCategorieWindow(Motorisation? voiture = null, Action<Piece>? onPieceSelected = null)
         {
             InitializeComponent();
             _repo = new GarageRepository();
             _voitureChoisie = voiture;
+            _callbackSelection = onPieceSelected; // On stocke l'action
 
-            if (_voitureChoisie != null)
-            {
+            if (_callbackSelection != null)
+                TxtTitreVoiture.Text = "Sélectionnez une catégorie pour la facture";
+            else if (_voitureChoisie != null)
                 TxtTitreVoiture.Text = $"Recherche pour : {_voitureChoisie.Nom}";
-            }
             else
-            {
-                TxtTitreVoiture.Text = "Mode Inventaire Global (Toutes les pièces)";
-            }
+                TxtTitreVoiture.Text = "Mode Inventaire Global";
 
             ChargerNiveau(null);
         }
 
         private void ChargerNiveau(int? parentId)
         {
-            var liste = (parentId == null)
-                ? _repo.GetRayonsPrincipaux()
-                : _repo.GetSousCategories(parentId.Value);
-
+            var liste = (parentId == null) ? _repo.GetRayonsPrincipaux() : _repo.GetSousCategories(parentId.Value);
             LstCategories.ItemsSource = liste;
         }
 
@@ -46,17 +44,25 @@ namespace IHM
 
                 if (enfants.Count > 0)
                 {
-                    // Mise à jour du titre selon le contexte
-                    string contexte = _voitureChoisie != null ? $"({_voitureChoisie.Nom})" : "";
-                    TxtTitreVoiture.Text = $"Rayon : {selection.Nom} {contexte}";
-
+                    TxtTitreVoiture.Text = $"Rayon : {selection.Nom}";
                     LstCategories.ItemsSource = enfants;
                 }
                 else
                 {
-                    // On ouvre la liste des pièces en passant la catégorie et la voiture (qui peut être null)
-                    ListePiecesWindow fenetre = new ListePiecesWindow(selection, _voitureChoisie);
-                    fenetre.ShowDialog();
+                    // C'est ici qu'on passe le _callbackSelection à la fenêtre suivante
+                    ListePiecesWindow fenetre = new ListePiecesWindow(selection, _voitureChoisie, _callbackSelection);
+
+                    if (_callbackSelection != null)
+                    {
+                        // Si on est en mode sélection, on ferme cette fenêtre de catégorie une fois la liste ouverte
+                        // ou on la laisse ouverte, mais fermons-la pour faire propre
+                        fenetre.Show(); // On affiche la suivante
+                        this.Close();   // On ferme celle-ci
+                    }
+                    else
+                    {
+                        fenetre.ShowDialog();
+                    }
                 }
             }
         }

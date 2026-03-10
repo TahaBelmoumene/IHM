@@ -376,12 +376,15 @@ namespace Metier.Data
         // Créer une facture complète
         public Facture CreerFacture(Client client, List<(Piece piece, int qte)> articles)
         {
+            // 1. Sécurisation : On indique à EF Core que ce client existe déjà (Unchanged)
+            _context.Attach(client);
+
             var facture = new Facture
             {
                 ClientId = client.Id,
                 DateEmission = System.DateTime.Now,
                 Lignes = new List<LigneFacture>(),
-                Client = client
+                Client = client // On le garde pour que QuestPDF puisse afficher le nom sur la facture
             };
 
             decimal totalGeneral = 0;
@@ -391,28 +394,31 @@ namespace Metier.Data
                 var piece = item.piece;
                 var qte = item.qte;
 
+                // 2. Sécurisation : On indique à EF Core que cette pièce existe déjà
+                _context.Attach(piece);
+
                 // Création de la ligne
                 var ligne = new LigneFacture
                 {
-                    PieceId = piece.Id,
+                    PieceId = piece.Id,  // L'ID suffit amplement pour la base de données
                     NomPiece = piece.Nom,
                     PrixUnitaire = piece.Prix,
-                    Quantite = qte, 
-                    Facture = facture,
-                    Piece = piece
+                    Quantite = qte,
+                    Facture = facture
+                    // Piece = piece  <-- LIGNE SUPPRIMÉE POUR ÉVITER LE BUG
                 };
 
                 facture.Lignes.Add(ligne);
                 totalGeneral += (piece.Prix * qte);
 
-                // Décrémenter le stock     
+                // Décrémenter le stock (EF Core générera un UPDATE au lieu d'un INSERT car la pièce est attachée)     
                 piece.Stock -= qte;
             }
 
             facture.Total = totalGeneral;
 
             _context.Factures.Add(facture);
-            _context.SaveChanges();
+            _context.SaveChanges(); // Il n'y aura plus de crash de contrainte UNIQUE ici !
 
             return facture;
         }

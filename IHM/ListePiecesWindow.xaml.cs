@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using Metier.Data;
 using Metier.Entities;
@@ -11,53 +12,57 @@ namespace IHM
         private Categorie _categorieEnCours;
         private Motorisation? _voitureEnCours;
 
-        public ListePiecesWindow(Categorie categorie, Motorisation? voiture = null)
+        // Nouvelle variable pour stocker l'action de retour
+        private Action<Piece>? _onPieceSelected;
+
+        // On ajoute le paramètre onPieceSelected à la fin
+        public ListePiecesWindow(Categorie categorie, Motorisation? voiture = null, Action<Piece>? onPieceSelected = null)
         {
             InitializeComponent();
             _repo = new GarageRepository();
             _categorieEnCours = categorie;
             _voitureEnCours = voiture;
+            _onPieceSelected = onPieceSelected;
+
+            // Si on est en mode sélection, on change le titre
+            if (_onPieceSelected != null)
+            {
+                TxtTitre.Text += " (Mode Sélection)";
+            }
 
             ChargerPieces();
         }
 
         private void ChargerPieces()
         {
-            // Mise à jour du titre
             TxtTitre.Text = _voitureEnCours != null
                 ? $"{_categorieEnCours.Nom} (pour {_voitureEnCours.Nom})"
-                : $"{_categorieEnCours.Nom} (Tout le stock)";
+                : $"{_categorieEnCours.Nom}";
 
-            // Sélection de la méthode de récupération selon le mode
             if (_voitureEnCours == null)
-            {
-                // Mode inventaire : on prend tout ce qui est dans la catégorie
                 GridPieces.ItemsSource = _repo.GetPiecesParCategorie(_categorieEnCours.Id);
-            }
             else
-            {
-                // Mode recherche client : on ne prend que les pièces compatibles
                 GridPieces.ItemsSource = _repo.GetPiecesCompatibles(_categorieEnCours.Id, _voitureEnCours.Id);
-            }
-
-            if (GridPieces.Items.Count == 0)
-            {
-                // Petit message discret dans la fenêtre de debug ou optionnel à l'utilisateur
-                // MessageBox.Show("Aucune pièce trouvée."); 
-            }
         }
 
-        private void BtnModifier_Click(object sender, RoutedEventArgs e)
+        private void BtnAction_Click(object sender, RoutedEventArgs e)
         {
-            // Récupérer l'élément lié au bouton cliqué
             if (sender is Button btn && btn.DataContext is Piece pieceSelectionnee)
             {
-                ModifierPieceWindow fenetre = new ModifierPieceWindow(pieceSelectionnee);
-                fenetre.ShowDialog();
-
-                // Rafraîchir la liste après la modification
-                _repo = new GarageRepository(); // On recrée le repo pour être sûr d'avoir les données fraîches
-                ChargerPieces();
+                // Si on a une action de sélection définie (on vient de la facture)
+                if (_onPieceSelected != null)
+                {
+                    _onPieceSelected(pieceSelectionnee); // On renvoie la pièce
+                    this.Close(); // On ferme la liste
+                }
+                else
+                {
+                    // Comportement normal (Modification)
+                    ModifierPieceWindow fenetre = new ModifierPieceWindow(pieceSelectionnee);
+                    fenetre.ShowDialog();
+                    _repo = new GarageRepository();
+                    ChargerPieces();
+                }
             }
         }
 
