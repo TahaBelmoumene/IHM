@@ -42,26 +42,21 @@ namespace IHM
             {
                 var enfants = _repo.GetSousCategories(selection.Id);
 
-                if (enfants.Count > 0)
-                {
-                    TxtTitreVoiture.Text = $"Rayon : {selection.Nom}";
-                    LstCategories.ItemsSource = enfants;
-                }
                 else
                 {
-                    // C'est ici qu'on passe le _callbackSelection à la fenêtre suivante
                     ListePiecesWindow fenetre = new ListePiecesWindow(selection, _voitureChoisie, _callbackSelection);
 
                     if (_callbackSelection != null)
                     {
-                        // Si on est en mode sélection, on ferme cette fenêtre de catégorie une fois la liste ouverte
-                        // ou on la laisse ouverte, mais fermons-la pour faire propre
-                        fenetre.Show(); // On affiche la suivante
-                        this.Close();   // On ferme celle-ci
+                        this.Hide();
+                        fenetre.ShowDialog();
+                        this.Close(); // Remonte jusqu'à la facture
                     }
                     else
                     {
+                        this.Hide();
                         fenetre.ShowDialog();
+                        this.Show(); // Réaffiche les catégories quand on ferme la liste des pièces
                     }
                 }
             }

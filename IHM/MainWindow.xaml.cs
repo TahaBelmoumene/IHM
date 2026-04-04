@@ -17,11 +17,10 @@ namespace IHM
 
             if (vm.MoteurSelected != null)
             {
-                
+                this.Hide(); // Cache la fenêtre de recherche
                 ChoixCategorieWindow fenetreCat = new ChoixCategorieWindow(vm.MoteurSelected);
-                fenetreCat.Show();
-
-                this.Close();
+                fenetreCat.ShowDialog();
+                this.Close(); // Quand on a fini avec les catégories, on ferme celle-ci pour retourner à l'accueil
             }
             else
             {

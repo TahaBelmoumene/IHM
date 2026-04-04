@@ -93,8 +93,8 @@ namespace Metier.Data
             _context.Clients.Add(new Client { Nom = nom, Prenom = prenom, Telephone = tel });
             _context.SaveChanges();
         }
-
-        public void AjouterPiece(string nom, decimal prix, int stock, string etat, int categorieId, int motorisationId)
+        // On ajoute le ? après int pour motorisationId, et on le met à null par défaut
+        public void AjouterPiece(string nom, decimal prix, int stock, string etat, int categorieId, int? motorisationId = null)
         {
             var nouvellePiece = new Piece
             {
@@ -107,7 +107,12 @@ namespace Metier.Data
 
             _context.Pieces.Add(nouvellePiece);
             _context.SaveChanges();
-            AjouterCompatibilite(nouvellePiece.Id, motorisationId);
+
+            // On ajoute la compatibilité UNIQUEMENT si une voiture a été sélectionnée
+            if (motorisationId.HasValue)
+            {
+                AjouterCompatibilite(nouvellePiece.Id, motorisationId.Value);
+            }
         }
 
         public void ModifierPiece(int id, string nouveauNom, decimal nouveauPrix, int nouveauStock, string nouvelEtat)

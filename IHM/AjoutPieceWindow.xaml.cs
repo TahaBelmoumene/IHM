@@ -126,8 +126,13 @@ namespace IHM
             bool categorieOk = _categorieFinale != null;
             bool moteurOk = _moteurSelectionne != null;
 
-            BtnValider.IsEnabled = categorieOk && moteurOk;
-            BtnValider.Opacity = (categorieOk && moteurOk) ? 1 : 0.5;
+            // Le bouton Enregistrer ne dépend plus que du rayon (catégorie)
+            BtnValider.IsEnabled = categorieOk;
+            BtnValider.Opacity = categorieOk ? 1 : 0.5;
+
+            // Le bouton Pack Démarrage dépend toujours du moteur
+            BtnPack.IsEnabled = moteurOk;
+            BtnPack.Opacity = moteurOk ? 1 : 0.5;
         }
         private void BtnPack_Click(object sender, RoutedEventArgs e)
         {
@@ -152,10 +157,31 @@ namespace IHM
             if (!decimal.TryParse(TxtPrix.Text.Replace(".", ","), out decimal prix)) { MessageBox.Show("Prix invalide"); return; }
             if (!int.TryParse(TxtStock.Text, out int stock)) { MessageBox.Show("Stock invalide"); return; }
 
-            if (_categorieFinale == null || _moteurSelectionne == null)
+            if (_categorieFinale == null)
             {
-                MessageBox.Show("Veuillez sélectionner un rayon et un véhicule complet.");
+                MessageBox.Show("Veuillez sélectionner au moins un rayon pour ranger la pièce.");
                 return;
+            }
+
+            int? idMoteur = null;
+
+            // Si aucune voiture n'est sélectionnée, on demande confirmation
+            if (_moteurSelectionne == null)
+            {
+                var resultat = MessageBox.Show(
+                    "Êtes-vous sûr de vouloir ajouter cette pièce sans sélectionner de voiture (pièce universelle) ?",
+                    "Confirmation",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+
+                if (resultat == MessageBoxResult.No)
+                {
+                    return; // L'utilisateur a cliqué sur "Non", on annule l'enregistrement
+                }
+            }
+            else
+            {
+                idMoteur = _moteurSelectionne.Id;
             }
 
             string etat = "Neuf";
@@ -164,9 +190,14 @@ namespace IHM
                 etat = item.Content.ToString();
             }
 
-            _repo.AjouterPiece(TxtNom.Text, prix, stock, etat, _categorieFinale.Id, _moteurSelectionne.Id);
+            // Appel au repo mis à jour
+            _repo.AjouterPiece(TxtNom.Text, prix, stock, etat, _categorieFinale.Id, idMoteur);
 
-            MessageBox.Show($"Pièce ajoutée pour {_moteurSelectionne.Nom} !");
+            if (idMoteur != null)
+                MessageBox.Show($"Pièce ajoutée pour {_moteurSelectionne.Nom} !");
+            else
+                MessageBox.Show("Pièce universelle ajoutée avec succès !");
+
             this.Close();
         }
     }

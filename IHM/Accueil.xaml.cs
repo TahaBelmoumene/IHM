@@ -11,9 +11,10 @@ namespace IHM
 
         private void BtnTrouver_Click(object sender, RoutedEventArgs e)
         {
+            this.Hide(); // Cache l'accueil
             MainWindow fenetreRecherche = new MainWindow();
-            fenetreRecherche.Show();
-            this.Close();
+            fenetreRecherche.ShowDialog(); // Attend que la fenêtre se ferme
+            this.Show(); // Réaffiche l'accueil
         }
 
         private void BtnAjouterPiece_Click(object sender, RoutedEventArgs e)
@@ -24,8 +25,10 @@ namespace IHM
 
         private void BtnModifierPiece_Click(object sender, RoutedEventArgs e)
         {
+            this.Hide(); // Cache l'accueil
             ChoixCategorieWindow fenetre = new ChoixCategorieWindow(null);
-            fenetre.Show();
+            fenetre.ShowDialog(); // Attend que la fenêtre se ferme
+            this.Show(); // Réaffiche l'accueil
         }
 
         private void BtnAjouterVoiture_Click(object sender, RoutedEventArgs e)
