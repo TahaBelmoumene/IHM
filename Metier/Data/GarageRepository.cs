@@ -31,8 +31,12 @@ namespace Metier.Data
         public List<Categorie> GetCategories() => _context.Categories.OrderBy(c => c.Nom).ToList();
         public List<Marque> GetMarques() => _context.Marques.OrderBy(m => m.Nom).ToList();
         public List<Modele> GetModeles(int marqueId) => _context.Modeles.Where(m => m.MarqueId == marqueId).OrderBy(m => m.Nom).ToList();
-        public List<Generation> GetGenerations(int modeleId) => _context.Generations.Where(g => g.ModeleId == modeleId).OrderBy(g => g.AnneeDebut).ToList();
-        public List<Motorisation> GetMoteurs(int generationId) => _context.Motorisations.Where(m => m.GenerationId == generationId).OrderBy(m => m.Nom).ToList();
+        public List<Piece> GetPiecesCompatibles(int categorieId, int motorisationId) =>
+            _context.Compatibilites
+                    .Where(c => c.MotorisationId == motorisationId && c.Piece != null && c.Piece.CategorieId == categorieId)
+                    .Select(c => c.Piece!) // Le '!' indique au compilateur que l'objet n'est garanti pas null
+                    .OrderBy(p => p.Nom)
+                    .ToList(); public List<Motorisation> GetMoteurs(int generationId) => _context.Motorisations.Where(m => m.GenerationId == generationId).OrderBy(m => m.Nom).ToList();
 
         public List<Categorie> GetRayonsPrincipaux() => _context.Categories.Where(c => c.ParentId == null).OrderBy(c => c.Nom).ToList();
         public List<Categorie> GetSousCategories(int parentId) => _context.Categories.Where(c => c.ParentId == parentId).OrderBy(c => c.Nom).ToList();
@@ -41,13 +45,6 @@ namespace Metier.Data
 
         public List<Marque> GetOrigines() => _context.Marques.Where(m => m.ParentId == null).OrderBy(m => m.Nom).ToList();
         public List<Marque> GetMarquesParOrigine(int origineId) => _context.Marques.Where(m => m.ParentId == origineId).OrderBy(m => m.Nom).ToList();
-
-        public List<Piece> GetPiecesCompatibles(int categorieId, int motorisationId) =>
-            _context.Compatibilites
-                    .Where(c => c.MotorisationId == motorisationId && c.Piece.CategorieId == categorieId)
-                    .Select(c => c.Piece)
-                    .OrderBy(p => p.Nom)
-                    .ToList();
 
         public List<Client> GetClients() => _context.Clients.OrderBy(c => c.Nom).ToList();
         #endregion

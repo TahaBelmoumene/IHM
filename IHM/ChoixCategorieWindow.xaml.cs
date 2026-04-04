@@ -42,6 +42,11 @@ namespace IHM
             {
                 var enfants = _repo.GetSousCategories(selection.Id);
 
+                if (enfants.Count > 0)
+                {
+                    TxtTitreVoiture.Text = $"Rayon : {selection.Nom}";
+                    LstCategories.ItemsSource = enfants;
+                }
                 else
                 {
                     ListePiecesWindow fenetre = new ListePiecesWindow(selection, _voitureChoisie, _callbackSelection);
