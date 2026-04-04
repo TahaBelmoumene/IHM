@@ -42,6 +42,7 @@ namespace IHM
             {
                 var enfants = _repo.GetSousCategories(selection.Id);
 
+                // IL MANQUAIT LA LIGNE CI-DESSOUS :
                 if (enfants.Count > 0)
                 {
                     TxtTitreVoiture.Text = $"Rayon : {selection.Nom}";
